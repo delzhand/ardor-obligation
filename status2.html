@@ -1,0 +1,370 @@
+<html>
+<head>
+<title>Status</title>
+
+<style>
+  html {
+    background: black;
+  }
+
+  .scale {
+    transform: scale(.75);
+    transform-origin: 0 0;
+  }
+
+  .wrapper {
+    width: 700px;
+  }
+
+  section {
+    background: radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    background: -moz-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    background: -webkit-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    background: -o-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    border: 5px solid #FFF;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 15px;
+    font: 18px arial;
+    color: white;
+    position: relative;
+  }
+
+  section + section {
+    margin-top: 1em;
+  }
+
+  article {
+    clear: both;
+  }
+
+  article + article {
+    margin-top: 2em;
+  }
+
+  .clear {
+    clear: both;
+  }
+
+  figure {
+    float: left;
+    margin: 0;
+    margin-right: 20px;
+  }
+
+  figure img {
+    max-width: 100px;
+    border: 2px solid white;
+    border-radius: 3px;
+  }
+
+  table {
+    color: white;
+  }
+
+  .status {
+    font-size: 18px;
+    width: 500px;
+  }
+
+  table.status td {
+    padding-right: 20px;
+    vertical-align: top;
+  }
+
+  .name {
+    font-size: 22px;
+    margin-bottom: .5em;
+    font-weight: bold;
+    width: 70px;
+  }
+
+  .window-name {
+    font-size: 22px;
+    margin-bottom: .5em;
+    font-weight: bold;
+  }
+
+
+  .altname {
+    font-size: 18px;
+    font-style: italic;
+    margin-bottom: .5em;
+  }
+
+  .name+.altname {
+    margin-top: -.5em;
+    margin-bottom: .5em;
+  }
+
+  .label {
+    color: #20B2AA;
+    min-width: 40px;
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .bar {
+    height: 2px;
+    position: relative;
+    background: #111;
+    margin-left: 54px;
+  }
+  /* .bar::after {
+    content: "";
+    height: 2px;
+    width: 1px;
+    background: white;
+    position: absolute;
+    right: 0px;
+  } */
+
+  .hpbar {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(to right, rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -moz-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -webkit-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -o-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+  }
+
+  .flex {
+    margin-top: -1em;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .flex>* {
+    margin-top: 1em;
+    flex: 1 0 50%;
+    max-width: 50%;
+  }
+
+  .old {
+    color: gray;
+    text-decoration: line-through;
+  }
+
+  .new {
+    font-weight: bold;
+    color: gold;
+  }
+
+  .detail {
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  .mt {
+    margin-top: .5em;
+  }
+
+  .message {
+    font-size: 1.2em;
+    text-align: center;
+  }
+
+  .mail {
+    margin-top: 1em;
+  }
+
+  .letter {
+    width: 64px;
+    height: auto;
+  }
+
+  .loyalty {
+    font-size: 12px;
+    letter-spacing: -2px;
+    color: black;
+    margin-top: 3px;
+    text-align: center;
+    background: white;
+    line-height: 1;
+    border-radius: 8px;
+    padding-top: .1em;
+  }
+
+  .loyalty .fill {
+    color: red;
+  }
+
+  .menu {
+    display: inline-block;
+    padding: 10px;
+  }
+  .menu .selected {
+    position: relative;
+    left: -5px;
+  }
+
+  .party {
+    margin-top: 3em;
+    clear: both;
+    font-size: 18px;
+    width: 100%;
+  }
+
+  .party td {
+    width: 25%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+  }
+  .party .label {
+    width: 100%;
+    font-weight: normal;
+    font-size: 18px;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="scale">
+<section class="wrapper">
+  <div class="">
+
+    <article>
+      <figure>
+        <img src="images/alexei2.png">
+      </figure>
+      <table class="status">
+        <tr>
+          <td rowspan=3><div class="name">Alexei</div><div class="altname">Whisper</div></td>
+          <td><span class="label">JOB</span> Fighter</td>
+          <td><span class="label">LV</span> 7</td>
+        </tr>
+        <tr>
+          <td><span class="label">HP</span> 100/100<div class="bar"><div class="hpbar" style="width: 100%;"></div></td>
+          <td><span class="label">EQP</span> Longsword</td>
+        </tr>
+        <tr>
+          <td colspan=2><div class="label mt">Status</div><div>Confident</div></td>
+        </tr>
+      </table>
+    </article>
+    
+    <article>
+      <figure>
+        <img src="images/tia.png">
+      </figure>
+      <table class="status">
+        <tr>
+          <td rowspan=3><div class="name">Tia</div><div class="altname">Sleet</div></td>
+          <td><span class="label">JOB</span> Mage</td>
+          <td><span class="label">LV</span> 7</td>
+        </tr>
+        <tr>
+          <td><span class="label">HP</span> 100/100<div class="bar"><div class="hpbar" style="width: 100%;"></div></td>
+          <td><span class="label">EQP</span> Spiked Cesti</td>
+        </tr>
+        <tr>
+          <td colspan=2><div class="label mt">Status</div><div>Cautious, Scalding Curse</div></td>
+        </tr>
+      </table>
+    </article>
+
+    <article>
+      <figure>
+        <img src="images/hilda.png">
+        <div class="loyalty"><span class="fill">❤❤❤❤❤</span>❤❤❤❤❤</div>
+      </figure>
+      <table class="status">
+        <tr>
+          <td rowspan=3><div class="name">Hilda</div><div class="altname"></div></td>
+          <td><span class="label">JOB</span> Archer</td>
+          <td><span class="label">LV</span> 6</td>
+        </tr>
+        <tr>
+          <td><span class="label">HP</span> 61/100<div class="bar"><div class="hpbar" style="width: 61%;"></div></td>
+          <td><span class="label">EQP</span> Shortbow</td>
+        </tr>
+        <tr>
+          <td colspan=2><div class="label mt">Status</div><div>Charming, Hard-Drinker, Grevit Rash</div></td>
+        </tr>
+      </table>
+    </article>
+
+    <article>
+      <figure>
+        <img src="images/stafford2.png">
+        <div class="loyalty"><span class="fill">❤❤</span>❤❤❤❤❤❤❤❤</div>
+      </figure>
+      <table class="status">
+        <tr>
+          <td rowspan=3><div class="name">Stafford</div><div class="altname"></div></td>
+          <td><span class="label">JOB</span> Healer</td>
+          <td><span class="label">LV</span> 3</td>
+        </tr>
+        <tr>
+          <td><span class="label">HP</span> 90/100<div class="bar"><div class="hpbar" style="width: 90%;"></div></td>
+          <td><span class="label">EQP</span> Shortsword</td>
+        </tr>
+        <tr>
+          <td colspan=2><div class="label mt">Status</div><div>Calm, <span class="old">Slowed</span></div></td>
+        </tr>
+      </table>
+    </article>
+    <table class="party">
+      <tr>
+        <td><div class="label">Party ATK</div> 4 ⚔</td>
+        <td><div class="label">Party HP</div> 5 ❤</td>
+        <td><div class="label">Mail</div> 3 ✉</td>
+        <td><div class="label">PostTokens</div> 0 ❇︎</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<section class="wrapper">
+  <div class="window-name">Inventory</div>
+  <div class="flex">
+    <div class="item">Silverpetal Oil (Tia)<br>
+      <span class="detail">mitigates scalding curse</span></div>
+    <div class="item"><span>Saffron Honey (Hilda)</span>
+      <br><span class="detail">various uses</span></div>
+    <div class="item"><span>Heal</span>
+      <br><span class="detail">treat a wound or condition</span></div>  
+    <div class="item"><span class="new">Grevit Meat</span>
+      <br><span class="detail">eat to permanently increase Party HP</span>
+    </div>
+  </div>
+</section>
+
+<section class="wrapper">
+  <div class="window-name">Key Items</div>
+  <div class="flex">
+    <div class="item">Heirloom Crest (Alexei)
+      <br><span class="detail">???</span></div>
+    <div class="item"><span>Mysterious Map</span>
+      <br><span class="detail">???</span></div>
+    <div class="item"><span>Bearer Credit (Tia)</span>
+      <br><span class="detail">worth a small fortune</span></div>
+    <div class="item"><span>Decoded Letter (Tia)</span>
+      <br><span class="detail">evidence of an assassination plot</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="wrapper">
+  <div class="message">It's the perfect gift! Hilda's loyalty increased from 3 to 5!</div>
+</section>
+
+<section class="menu">
+  <div class="selected">▶MOVE</div>
+  <div>ATTACK</div>
+  <div>TECH</div>
+  <div>DEFEND</div>
+</section> -->
+
+</div>
+
+</body>
+<html>

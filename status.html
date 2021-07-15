@@ -1,0 +1,281 @@
+<html>
+<head>
+<title>Status</title>
+
+<style>
+  html {
+    background: black;
+  }
+
+  .scale {
+    transform: scale(.75);
+    transform-origin: 0 0;
+  }
+
+  .wrapper {
+    width: 700px;
+  }
+
+  section {
+    background: radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    background: -moz-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    background: -webkit-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    background: -o-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+    border: 5px solid #FFF;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 30px;
+    font: 18px arial;
+    color: white;
+    position: relative;
+  }
+
+  section + section {
+    margin-top: 1em;
+  }
+
+  article {
+    clear: both;
+  }
+
+  figure {
+    float: left;
+    margin: 0;
+    margin-right: 20px;
+  }
+
+  figure img {
+    max-width: 100px;
+  }
+
+  .status {
+    padding-left: 120px;
+    padding-right: 2em;
+  }
+
+  .name {
+    font-size: 22px;
+    margin-bottom: .5em;
+    font-weight: bold;
+  }
+
+  .altname {
+    font-size: 18px;
+    font-style: italic;
+    margin-bottom: .5em;
+  }
+
+  .name+.altname {
+    margin-top: -.5em;
+    margin-bottom: .5em;
+  }
+
+  .label {
+    color: #20B2AA;
+    min-width: 40px;
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .bar {
+    height: 2px;
+    position: relative;
+    background: #111;
+    margin-left: 54px;
+  }
+  /* .bar::after {
+    content: "";
+    height: 2px;
+    width: 1px;
+    background: white;
+    position: absolute;
+    right: 0px;
+  } */
+
+  .hpbar {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(to right, rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -moz-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -webkit-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -o-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+  }
+
+  .flex {
+    margin-top: -1em;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .flex>* {
+    margin-top: 1em;
+    flex: 1 0 50%;
+    max-width: 50%;
+  }
+
+  .old {
+    color: gray;
+    text-decoration: line-through;
+  }
+
+  .new {
+    font-weight: bold;
+    color: gold;
+  }
+
+  .detail {
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  .mt {
+    margin-top: .5em;
+  }
+
+  .message {
+    font-size: 1.2em;
+    text-align: center;
+  }
+
+  .mail {
+    margin-top: 1em;
+  }
+
+  .letter {
+    width: 64px;
+    height: auto;
+  }
+
+  .loyalty {
+    font-size: .8em;
+    letter-spacing: -5px;
+  }
+
+  .menu {
+    display: inline-block;
+    padding: 10px;
+  }
+  .menu .selected {
+    position: relative;
+    left: -5px;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="scale">
+<section class="wrapper">
+  <div class="flex">
+    <article>
+      <figure><img src="images/alexei2.png"></figure>
+      <div class="status">
+        <div class="name">Alexei</div>
+        <div class="altname">Whisper</div>
+        <div><span class="label">JOB</span> Fighter</div>
+        <div><span class="label">LV</span> 7</div>
+        <div><span class="label">HP</span> 100/100</div>
+        <div class="bar"><div class="hpbar" style="width: 100%;"></div></div>
+        <div><span class="label">EQP</span> Longsword</div>
+        <div class="label mt">Status</div>
+        <div>Confident</div>
+      </div>
+    </article>
+
+    <article>
+      <figure><img src="images/tia2.png"></figure>
+      <div class="status">
+        <div class="name">Tia</div>
+        <div class="altname">Sleet</div>
+        <div><span class="label">JOB</span> Mage</div>
+        <div><span class="label">LV</span> 7</div>
+        <div><span class="label">HP</span> 100/100</div>
+        <div class="bar"><div class="hpbar" style="width: 100%;"></div></div>
+        <div><span class="label">EQP</span> Spiked Cesti</div>
+        <div class="label mt">Status</div>
+        <div>Cautious, Scalding Curse</div>
+      </div>
+    </article>
+
+    <article>
+      <figure><img src="images/hilda.png"></figure>
+      <div class="status">
+        <div class="name">Hilda</div>
+        <div><span class="label">JOB</span> Archer</div>
+        <div><span class="label">LV</span> 6</div>
+        <div><span class="label">HP</span> 61/100</div>
+        <div class="bar"><div class="hpbar" style="width: 61%;"></div></div>
+        <div><span class="label">EQP</span> Shortbow</div>
+        <div class="loyalty">❤️❤️❤️❤️❤️🖤🖤🖤🖤🖤</div>
+        <div class="label mt">Status</div>
+        <div>Charming, Hard-Drinker, Grevit Rash</div>
+      </div>
+    </article>
+
+    <article>
+      <figure><img src="images/stafford2.png"></figure>
+      <div class="status">
+        <div class="name">Stafford</div>
+        <div><span class="label">JOB</span> Healer</div>
+        <div><span class="label">LV</span> 3</div>
+        <div><span class="label">HP</span> 90/100</div>
+        <div class="bar"><div class="hpbar" style="width: 90%;"></div></div>
+        <div><span class="label">EQP</span> Shortsword</div>
+        <div class="loyalty">❤️❤️🖤🖤🖤🖤🖤🖤🖤🖤</div>
+        <div class="label mt">Status</div>
+        <div>Calm, <span class="old">Slowed</span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="wrapper">
+  <div class="name">Inventory</div>
+  <div class="flex">
+    <div class="item">Heirloom Crest (Alexei)
+      <br><span class="detail">???</span></div>
+    <div class="item">Silverpetal Oil (Tia)<br>
+      <span class="detail">consumable, mitigates scalding curse</span></div>
+    <div class="item"><span>Saffron Honey (Hilda)</span>
+      <br><span class="detail">various uses</span></div>
+    <div class="item"><span>Heal</span>
+      <br><span class="detail">consumable, treat a wound</span></div>  
+    <div class="item"><span>Mysterious Map</span>
+      <br><span class="detail">???</span></div>
+    <div class="item"><span>Bearer Credit (Tia)</span>
+      <br><span class="detail">worth a small fortune</span></div>
+    <div class="item"><span>Decoded Letter (Tia)</span>
+      <br><span class="detail">evidence of an assassination plot</span></div>
+    <div class="item"><span>Business Ledger (Alexei)</span>
+      <br><span class="detail">Nereid Trading's recent financial records</span></div>
+    <div class="item"><span>Grevit Meat</span>
+      <br><span class="detail">Sells for a fair price, or </span>
+    </div>
+    <div class="item"><span>Mail x3</span>
+      <br><span class="detail">Deliver to earn PostTokens</span></div>  
+    <!-- <div class="item"><span>PostToken x1</span>
+      <br><span class="detail">Exchange for special goods</span></div> -->
+  </div>
+</section>
+
+<!-- <section class="wrapper">
+  <div class="message">It's the perfect gift! Hilda's loyalty increased from 3 to 5!</div>
+</section>
+
+<section class="menu">
+  <div class="selected">▶MOVE</div>
+  <div>ATTACK</div>
+  <div>TECH</div>
+  <div>DEFEND</div>
+</section> -->
+
+</div>
+
+</body>
+<html>
