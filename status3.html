@@ -9,13 +9,11 @@
     background: black;
   }
 
-  .scale {
-    transform: scale(.75);
-    transform-origin: 0 0;
-  }
-
-  .wrapper {
-    width: 700px;
+  .wrapper::after,
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
   }
 
   section {
@@ -66,6 +64,10 @@
 
   table {
     color: white;
+  }
+
+  .ally {
+    font-size: 18px;
   }
 
   .status {
@@ -229,7 +231,6 @@
 </head>
 <body>
 
-<div class="scale">
 <section class="wrapper">
   <div class="">
 
@@ -336,7 +337,7 @@
       <br><span class="detail">treat a wound or condition</span></div>  
     <div class="item"><span class="new">Grevit Meat</span>
       <br><span class="detail">eat to permanently increase Party HP</span></div>
-    <div class="item"><span class="new">Heroic Poem (@endless_serpents)</span>
+    <div class="item old"><span class="">Heroic Poem (@endless_serpents)</span>
       <br><span class="detail">gift to someone to increase loyalty</span></div>
   </div>
 </section>
@@ -348,13 +349,48 @@
       <br><span class="detail">???</span></div>
     <div class="item"><span>Mysterious Map</span>
       <br><span class="detail">???</span></div>
-    <div class="item old"><span>Bearer Credit (Tia)</span>
-      <br><span class="detail">worth a small fortune</span></div>
     <div class="item"><span>Decoded Letter (Tia)</span>
       <br><span class="detail">evidence of an assassination plot</span></div>
   </div>
 </section>
 
+<section class="wrapper"> 
+    <div class="window-name">Allies</div>
+    <div class="flex">
+      <article>
+        <figure>
+          <img src="images/ophelia.jpeg">
+          <div class="loyalty"><span class="fill">❤❤❤❤❤❤❤</span>❤❤❤</div>
+        </figure>
+        <table class="ally">
+          <tr>
+            <td rowspan=3>
+              <div class="name">Ophelia</div>
+              <div><span class="label">JOB</span> Herbalist</div>
+              <div><span class="label">LV</span> 2</div>
+            </td>
+          </tr>
+        </table>
+      </article>
+
+      <article>
+        <figure>
+          <img src="images/dhara.png">
+          <div class="loyalty"><span class="fill">❤❤❤</span>❤❤❤❤❤❤❤</div>
+        </figure>
+        <table class="ally">
+          <tr>
+            <td rowspan=3>
+              <div class="name">Dhara</div>
+              <div><span class="label">JOB</span> Blacksmith</div>
+              <div><span class="label">LV</span> 5</div>
+            </td>
+          </tr>
+        </table>
+      </article>
+    </div>
+  </section>
+  
 <section class="wrapper"> 
   <div class="window-name">PostToken Shop</div>
   <div class="flex">
@@ -363,8 +399,11 @@
     <div class="item"><span>Violet Dye - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
     <div class="item"><span>Scarab Brooch - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
     <div class="item"><span>Feline Carving - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
-    <div class="item"><span>Weird Leaf - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
+    <div class="item"><span>Pressed Leaf - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
     <div class="item"><span>Strong Tea - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
+    <div class="item"><span>Unique Seashell - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
+    <div class="item"><span>Ancient Coin - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>
+    <div class="item"><span>Fossilized Bone - 1❇︎</span><br><span class="detail">gift to someone to increase loyalty</span></div>    
     <div class="item"><span>Lens of Truth - 2❇︎</span><br><span class="detail">reveal hidden consequences of a vote option</span></div>
     <div class="item"><span>Heal - 2❇︎</span><br><span class="detail">treat a wound or condition</span></div>
     <div class="item"><span>Vigor Drink - 2❇︎</span><br><span class="detail">increases party ATK for the next encounter</span></div>
@@ -382,8 +421,6 @@
   <div>TECH</div>
   <div>DEFEND</div>
 </section> -->
-
-</div>
 
 </body>
 <html>
