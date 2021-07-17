@@ -217,14 +217,8 @@
 
   .loyalty {
     font-size: 12px;
-    letter-spacing: -3px;
-    color: black;
     margin-top: 3px;
     text-align: center;
-    background: white;
-    line-height: 1;
-    border-radius: 8px;
-    padding-top: .1em;
   }
 
   .loyalty .fill {
@@ -436,7 +430,7 @@
     <article class="clearfix">
       <figure>
         <img class="avatar" src="images/${pc.image}">
-        ${loyalty(pc.loyalty)}
+        <div class="loyalty"><span class="label">Loyalty</span> ${pc.loyalty}/10</div>
       </figure>
 
       <div class="stats">
@@ -462,7 +456,7 @@
       <article class="clearfix">
         <figure>
           <img src="images/${ally.image}">
-          ${loyalty(ally.loyalty)}
+          <div class="loyalty"><span class="label">Loyalty</span> ${ally.loyalty}/10</div>
         </figure>
         <div class="ally-stats">
           <div class="name">${ally.name}</div>
