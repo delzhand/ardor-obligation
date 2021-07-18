@@ -424,7 +424,8 @@
       loyalty: 6,
       job: 'Herbalist',
       lv: 2,
-      nature: 'Studious'
+      nature: 'Studious',
+      loc: 'Runo'
     },
     {
       name: 'Dhara',
@@ -432,7 +433,8 @@
       loyalty: 3,
       job: 'Blacksmith',
       lv: 5,
-      nature: 'Straightforward'
+      nature: 'Straightforward',
+      loc: 'Dooreyt'
     },
     {
       name: 'Opta',
@@ -440,7 +442,8 @@
       loyalty: 2,
       job: 'Priest',
       lv: 3,
-      nature: 'Optimistic'
+      nature: 'Optimistic',
+      loc: 'Dooreyt'
     }
   ];
   const inventory = [
@@ -516,7 +519,7 @@
           <div class="name">${ally.name}</div>
           <div><span class="label">JOB</span> ${ally.job}</div>
           <div><span class="label">LV</span> ${ally.lv}</div>
-          <div class="nature"><div class="label mt">Nature</div><div>${ally.nature}</div></div>
+          <div><span class="label">LOC</span> ${ally.loc}</div>
         </div>
       </article>    
     `);
