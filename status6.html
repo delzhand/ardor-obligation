@@ -26,14 +26,14 @@
   }
 
   section {
-    background: radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
-    background: -moz-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
-    background: -webkit-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
-    background: -o-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
-    border: 5px solid #FFF;
-    -moz-border-radius: 15px;
-    -webkit-border-radius: 15px;
-    border-radius: 15px;
+    background: radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    background: -moz-radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    background: -webkit-radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    background: -o-radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    border: 3px solid #FFF;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -171,6 +171,8 @@
     color: #20B2AA;
     display: inline-block;
     margin-right: 10px;
+    font-weight: bold;
+    font-variant: small-caps;
   }
 
   .bar {
@@ -314,6 +316,8 @@
 </head>
 <body>
 
+<!-- You inspected the page source? Good for you! Send me a PM on the forums and let me know you saw this message, and you'll get a special prize! -->
+
 <div id="nav">
   <div class="container">
     <ul>
@@ -321,6 +325,7 @@
       <li><a href="#inventory">Inventory</a></li>
       <li><a href="#keyitems">Key Items</a></li>
       <li><a href="#allies">Allies</a></li>
+      <li><a href="#quests">Quests</a></li>
       <li><a href="#shop">Shop</a></li>
     </ul>
   </div>
@@ -354,15 +359,17 @@
     <div id="ally-list" class="flex"></div>
   </section>
     
+  <section id="quests"> 
+    <div class="window-name">Side Quests</div>
+    <div id="quest-list" class="flex">
+    </div>
+  </section>
+
   <section id="shop"> 
     <div class="window-name">PostToken Shop</div>
     <div id="shop-list" class="flex">
     </div>
   </section>
-
-  <!-- <section>
-    <div class="message">What a thoughtful gift! Dhara's loyalty increased from 2 to 3.</div>
-  </section> -->
 
 </div>
 
@@ -398,10 +405,10 @@
       image: 'hilda.jpeg',
       job: 'Archer',
       lv: 6,
-      hp: 68,
+      hp: 88,
       eqp: 'Shortbow',
       nature: 'Charming',
-      status: 'Grevit Rash',
+      status: '',
       loyalty: 5
     },
     {
@@ -448,13 +455,14 @@
   ];
   const inventory = [
     {item: 'Silverpetal Oil (Tia)', desc: 'mitigates scalding curse'},
-    {item: 'Saffron Honey (Hilda)', desc: 'various uses'},
+    {item: 'Saffron Honey (Hilda)', desc: 'eat for ???'},
     {item: 'Heal', desc: 'treat a wound or condition'},
     {item: 'Grevit Meat', desc: 'eat to permanently increase Party HP'},
+    {item: 'Smoky Spices (@mojo_jojo)', desc: 'gift to someone to increase loyalty'}
   ];
   const keyItems = [
-    {item: 'Heirloom Crest (Alexei)', desc: '???'},
-    {item: 'Mysterious Map', desc: '???'},
+    {item: 'Heirloom Crest (Alexei)', desc: 'inspect for more information'},
+    {item: 'Mysterious Map', desc: 'inspect for more information'},
     {item: 'Decoded Letter (Tia)', desc: 'evidence of assassination plot'},
     {item: 'Mageblessing Recipe (Tia)', desc: 'details on a potion for mage\'s curse'}
   ];
@@ -473,6 +481,10 @@
     {item: 'Heal', desc: 'treat a wound or condition', cost: 2},
     {item: 'Vigor Drink', desc: 'increases party ATK for the next encounter', cost: 2},
     {item: 'Veil of Night', desc: 'increases party HP for the next encounter', cost: 2},
+  ];
+  const quests = [
+    {name: 'Sigil of Hollos', lv: 8, desc: 'Summon Hollos and face judgment', status: 'open', reward: ''},
+    {name: 'Ruins of Bleda', lv: 5, desc: 'Search the ruins for a rare reagent', status: 'open', reward: ''}
   ];
   
   function loyalty(v) {
@@ -493,10 +505,10 @@
       <div class="stats">
         <div class="name">${pc.name} ${pc.altname}</div>
         <div class="substats">
-          <div class="job"><span class="label">JOB</span> ${pc.job}</div>
-          <div class="lv"><span class="label">LV</span> ${pc.lv}</div>
-          <div class="hp"><span class="label">HP</span> ${pc.hp}/100</div>
-          <div class="eqp"><span class="label">EQP</span> ${pc.eqp}</div>
+          <div class="job"><span class="label">Job</span> ${pc.job}</div>
+          <div class="lv"><span class="label">Lv</span> ${pc.lv}</div>
+          <div class="hp"><span class="label">Hp</span> ${pc.hp}/100</div>
+          <div class="eqp"><span class="label">Eqp</span> ${pc.eqp}</div>
         </div>
         <div class="longstats">
           <div class="nature"><div class="label mt">Nature</div><div>${pc.nature}</div></div>
@@ -517,9 +529,9 @@
         </figure>
         <div class="ally-stats">
           <div class="name">${ally.name}</div>
-          <div><span class="label">JOB</span> ${ally.job}</div>
-          <div><span class="label">LV</span> ${ally.lv}</div>
-          <div><span class="label">LOC</span> ${ally.loc}</div>
+          <div><span class="label">Job</span> ${ally.job}</div>
+          <div><span class="label">Lv</span> ${ally.lv}</div>
+          <div><span class="label">Loc</span> ${ally.loc}</div>
         </div>
       </article>    
     `);
@@ -536,6 +548,16 @@
   keyItems.forEach(item => {
     $('#keyitem-list').append(`<div class="item">${item.item}<br><span class="detail">${item.desc}</span></div>`);
   });
+
+  quests.forEach(item => {
+    $('#quest-list').append(`
+      <div class="quest item">
+        <div><b>${item.name}</b> - Lv ${item.lv} - ${item.status}</div>
+        <div class="detail">${item.desc}</div>
+        <div class="detail">${item.reward}</div>
+      </div>
+    `);
+  })
   
 </script>
 </body>
