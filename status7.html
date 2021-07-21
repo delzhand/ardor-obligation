@@ -1,0 +1,564 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.scrollto@2.1.3/jquery.scrollTo.min.js"></script>
+
+<title>Party Status</title>
+
+<style>
+  body {
+    background: black;
+  }
+
+  .clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+  .container {
+    max-width: 720px !important;
+  }
+
+  section {
+    background: radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    background: -moz-radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    background: -webkit-radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    background: -o-radial-gradient(-180px 0px,circle ,#2e5681 300px,#2b3458 500px,#000223);
+    border: 3px solid #FFF;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    padding: 15px;
+    font: 18px arial;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1em;
+    margin-top: 1em;
+  }
+
+  #nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    background: black;
+    padding-bottom: 10px;
+    padding-top: 8px;
+  }
+
+  #nav ul {
+    display: flex;
+    justify-content: space-around;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom: none;
+    margin-bottom: 0;
+    list-style-type: none;
+    padding: 0;
+  }
+
+  #nav ul a {
+    color: #FFF;
+    font-weight: bold;
+  }
+
+  #shop {
+    margin-bottom: 3.75em;
+  }
+
+  article {
+    clear: both;
+  }
+
+  article + article {
+    margin-top: 2em;
+  }
+
+  .clear {
+    clear: both;
+  }
+
+  figure {
+    float: right;
+    margin: 0;
+  }
+  @media (min-width: 768px) {
+    figure {
+      margin-right: 20px;
+      float: left;
+    }
+  }
+
+  figure img {
+    max-width: 100px;
+    border: 2px solid white;
+    border-radius: 3px;
+  }
+
+  .stats {
+    font-size: 14px;
+  }
+
+  @media (min-width: 768px) {
+    .stats {
+      float: left;
+      width: calc(100% - 120px);
+    }
+    .substats {
+      display: flex;
+      justify-content: space-between;
+    }
+    .substats>* {
+      /* flex: 1 0 25%; */
+    }
+    .longstats {
+      display: flex;
+      justify-content: start;
+    }
+    .longstats>* {
+    }
+    .eqp {
+      min-width: 200px;
+    }
+    .nature {
+      min-width: 208px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .stats {
+      font-size: 18px;
+    }
+  }
+
+  table {
+    color: white;
+  }
+
+  .ally {
+    font-size: 18px;
+  }
+
+  table.status td {
+    padding-right: 20px;
+    vertical-align: top;
+  }
+
+  .name {
+    font-size: 22px;
+    margin-bottom: .5em;
+    font-weight: bold;
+  }
+
+  .window-name {
+    font-size: 22px;
+    margin-bottom: .5em;
+    font-weight: bold;
+  }
+
+  .label {
+    color: #20B2AA;
+    display: inline-block;
+    margin-right: 10px;
+    font-weight: bold;
+    font-variant: small-caps;
+  }
+
+  .bar {
+    height: 2px;
+    position: relative;
+    background: #111;
+    margin-left: 54px;
+  }
+  /* .bar::after {
+    content: "";
+    height: 2px;
+    width: 1px;
+    background: white;
+    position: absolute;
+    right: 0px;
+  } */
+
+  .hpbar {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: linear-gradient(to right, rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -moz-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -webkit-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+    background: -o-linear-gradient(to right,rgb(20, 102, 255) 60%,rgb(190, 213, 255));
+  }
+
+  @media (min-width: 768px) {
+  .flex {
+      margin-top: -1em;
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+
+  .flex>* {
+    margin-top: 1em;
+  }
+  @media (min-width: 768px) {
+    .flex>* {
+      flex: 1 0 50%;
+      max-width: 50%;
+    }
+  }
+
+  .old {
+    color: gray;
+    text-decoration: line-through;
+  }
+
+  .new {
+    font-weight: bold;
+    color: gold;
+  }
+
+  .detail {
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  .mt {
+    margin-top: .5em;
+  }
+
+  .message {
+    font-size: 1.2em;
+    text-align: center;
+  }
+
+  .mail {
+    margin-top: 1em;
+  }
+
+  .letter {
+    width: 64px;
+    height: auto;
+  }
+
+  .loyalty {
+    font-size: 14px;
+    margin-top: 3px;
+    text-align: center;
+  }
+
+  .loyalty .fill {
+    color: red;
+  }
+
+  .menu {
+    display: inline-block;
+    padding: 10px;
+  }
+  .menu .selected {
+    position: relative;
+    left: -5px;
+  }
+
+  .party {
+    margin-top: 26px;
+    clear: both;
+    font-size: 0px;
+    width: 100%;
+  }
+
+  .party>* {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+  }
+  @media (min-width: 768px) {
+    .party>* {
+      width: 25%;
+    }
+  }
+
+  .party .label {
+    width: 100%;
+    font-weight: normal;
+    font-size: 18px;
+  }
+
+  .item {
+    font-size: 14px;
+  }
+  .item .detail {
+    font-size: 12px;
+  }
+  @media (min-width: 768px) {
+    .item {
+      font-size: 18px;
+    }
+    .item .detail {
+      font-size: 14px;
+    }
+  }
+</style>
+
+</head>
+<body>
+
+<!-- You inspected the page source? Good for you! Send me a PM on the forums and let me know you saw this message, and you'll get a special prize! -->
+
+<div id="nav">
+  <div class="container">
+    <ul>
+      <li><a href="#party">Party</a></li>
+      <li><a href="#inventory">Inventory</a></li>
+      <li><a href="#keyitems">Key Items</a></li>
+      <li><a href="#allies">Allies</a></li>
+      <li><a href="#quests">Quests</a></li>
+      <li><a href="#shop">Shop</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="container">
+  <section id="party">
+    <div id="party-list">
+    </div>
+    <div class="party">
+      <div><div class="label">Party ATK</div> 5 ⚔</div>
+      <div><div class="label">Party HP</div> 5 ❤</div>
+      <div><div class="label">Mail</div> 5 ✉</div>
+      <div><div class="label">PostTokens</div> 1 ❇︎</div>
+    </div>
+  </section>
+
+  <section id="inventory">
+    <div class="window-name">Inventory</div>
+    <div id="inventory-list" class="flex"></div>
+  </section>
+
+  <section id="keyitems">
+    <div class="window-name">Key Items</div>
+    <div id="keyitem-list" class="flex"></div>
+  </section>
+
+  <section id="allies"> 
+    <div class="window-name">Allies</div>
+    <div id="ally-list" class="flex"></div>
+  </section>
+    
+  <section id="quests"> 
+    <div class="window-name">Side Quests</div>
+    <div id="quest-list" class="flex">
+    </div>
+  </section>
+
+  <section id="shop"> 
+    <div class="window-name">PostToken Shop</div>
+    <div id="shop-list" class="flex">
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const pcs = [
+    {
+      name: 'Alexei',
+      altname: '(Whisper)',
+      image: 'alexei3.png',
+      job: 'Fighter',
+      lv: 7,
+      hp: 100,
+      eqp: 'Longsword',
+      nature: 'Confident',
+      status: 'Good',
+      loyalty: null
+    },
+    {
+      name: 'Tia',
+      altname: '(Sleet)',
+      image: 'tia3.png',
+      job: 'Mage',
+      lv: 7,
+      hp: 100,
+      eqp: 'Spiked Cesti',
+      nature: 'Cautious',
+      status: 'Scalding Curse (25%)',
+      loyalty: null
+    },
+    {
+      name: 'Hilda',
+      altname: '',
+      image: 'hilda.jpeg',
+      job: 'Archer',
+      lv: 6,
+      hp: 88,
+      eqp: 'Shortbow',
+      nature: 'Charming',
+      status: 'Good',
+      loyalty: 5
+    },
+    {
+      name: 'Stafford',
+      altname: '',
+      image: 'stafford.jpeg',
+      job: 'Healer',
+      lv: 3,
+      hp: 100,
+      eqp: 'Shortsword',
+      nature: 'Calm',
+      status: 'Good',
+      loyalty: 2
+    }
+  ];
+  const allies = [
+    {
+      name: 'Ophelia',
+      image: 'ophelia.jpeg',
+      loyalty: 6,
+      job: 'Herbalist',
+      lv: 2,
+      nature: 'Studious',
+      loc: 'Runo'
+    },
+    {
+      name: 'Dhara',
+      image: 'dhara.jpeg',
+      loyalty: 3,
+      job: 'Blacksmith',
+      lv: 5,
+      nature: 'Straightforward',
+      loc: 'Dooreyt'
+    },
+    {
+      name: 'Opta',
+      image: 'opta.jpeg',
+      loyalty: 2,
+      job: 'Priest',
+      lv: 3,
+      nature: 'Optimistic',
+      loc: 'Dooreyt'
+    }
+  ];
+  const inventory = [
+    {item: 'Silverpetal Oil (Tia)', desc: 'mitigates scalding curse'},
+    {item: 'Saffron Honey (Hilda)', desc: 'eat for ???'},
+    {item: 'Heal', desc: 'treat a wound or condition'},
+    {item: 'Grevit Meat', desc: 'eat to permanently increase Party HP'},
+    {item: 'Smoky Spices (@mojo_jojo)', desc: 'gift to someone to increase loyalty'}
+  ];
+  const keyItems = [
+    {item: 'Heirloom Crest (Alexei)', desc: 'inspect for more information'},
+    {item: 'Mysterious Map', desc: 'inspect for more information'},
+    {item: 'Decoded Letter (Tia)', desc: 'evidence of assassination plot'},
+    {item: 'Mageblessing Recipe (Tia)', desc: 'details on a potion for mage\'s curse'}
+  ];
+  const shop = [
+    {item: 'Heroic Poem', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Smoky Spices', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Violet Dye', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Scarab Brooch', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Feline Carving', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Pressed Leaf', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Strong Tea', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Unique Seashell', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Ancient Coin', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Fossilized Bone', desc: 'gift to someone to increase loyalty', cost: 1},
+    {item: 'Lens of Truth', desc: 'reveal hidden consequences of a vote option', cost: 2},
+    {item: 'Heal', desc: 'treat a wound or condition', cost: 2},
+    {item: 'Vigor Drink', desc: 'increases party ATK for the next encounter', cost: 2},
+    {item: 'Veil of Night', desc: 'increases party HP for the next encounter', cost: 2},
+  ];
+  const quests = [
+    {name: 'Sigil of Hollos', lv: 8, desc: 'Summon Hollos and face judgment', status: 'open', reward: ''},
+    {name: 'Ruins of Bleda', lv: 5, desc: 'Search the ruins for a rare reagent', status: 'in progress', reward: ''}
+  ];
+  
+  function loyalty(v) {
+    if (v === null) {
+      return '';
+    }
+    return `<div class="loyalty"><span class="label">Loyalty</span> ${v}/10</div>`;
+  }
+
+  pcs.forEach(pc => {
+    $('#party-list').append(`
+    <article class="clearfix">
+      <figure>
+        <img class="avatar" src="images/${pc.image}">
+        ${loyalty(pc.loyalty)}
+      </figure>
+
+      <div class="stats">
+        <div class="name">${pc.name} ${pc.altname}</div>
+        <div class="substats">
+          <div class="job"><span class="label">Job</span> ${pc.job}</div>
+          <div class="lv"><span class="label">Lv</span> ${pc.lv}</div>
+          <div class="hp"><span class="label">Hp</span> ${pc.hp}/100</div>
+          <div class="eqp"><span class="label">Eqp</span> ${pc.eqp}</div>
+        </div>
+        <div class="longstats">
+          <div class="nature"><div class="label mt">Nature</div><div>${pc.nature}</div></div>
+          <div class="status"><div class="label mt">Status</div><div>${pc.status}</div></div>
+        </div>
+      </div>
+
+    </article>
+    `);
+  });
+
+  allies.forEach(ally => {
+    $('#ally-list').append(`
+      <article class="clearfix">
+        <figure>
+          <img src="images/${ally.image}">
+          ${loyalty(ally.loyalty)}
+        </figure>
+        <div class="ally-stats">
+          <div class="name">${ally.name}</div>
+          <div><span class="label">Job</span> ${ally.job}</div>
+          <div><span class="label">Lv</span> ${ally.lv}</div>
+          <div><span class="label">Loc</span> ${ally.loc}</div>
+        </div>
+      </article>    
+    `);
+  })
+
+  shop.forEach(item => {
+    $('#shop-list').append(`<div class="item"><span>${item.item} - ${item.cost}❇︎</span><br><span class="detail">${item.desc}</span></div>`);
+  });
+
+  inventory.forEach(item => {
+    $('#inventory-list').append(`<div class="item">${item.item}<br><span class="detail">${item.desc}</span></div>`);
+  });
+
+  keyItems.forEach(item => {
+    $('#keyitem-list').append(`<div class="item">${item.item}<br><span class="detail">${item.desc}</span></div>`);
+  });
+
+  quests.forEach(item => {
+    $('#quest-list').append(`
+      <div class="quest item">
+        <div><b>${item.name}</b> - Lv ${item.lv} - ${item.status}</div>
+        <div class="detail">${item.desc}</div>
+        <div class="detail">${item.reward}</div>
+      </div>
+    `);
+  })
+  
+</script>
+</body>
+<html>

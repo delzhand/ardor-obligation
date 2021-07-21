@@ -63,13 +63,13 @@
       {p: "discrider", a: ['defend', 'move', 'attack']},
       {p: "endless_serpents", a: ['tech', 'attack', 'move']},
     ];
-    let partyDisposition = 6;
-    let enemyDisposition = 3;
-    let partyPower = 4;
-    let enemyPower = 3;
+    let partyHP = 6;
+    let enemyHP = 5;
+    let partyPower = 5;
+    let enemyPower = 5;
 
-    let partyMaxDisposition = partyDisposition;
-    let enemyMaxDisposition = enemyDisposition;
+    let partyMaxHP = partyHP;
+    let enemyMaxHP = enemyHP;
     let partyMod = 0;
     let enemyMod = 0;
 
@@ -139,40 +139,44 @@
       document.getElementById("log").appendChild(node);
     }
 
-    function enemyDispositionChange(v) {
+    function enemyHPChange(v) {
       if (v < 0) {
-        enemyDisposition -= v;
-        enemyDisposition = enemyDisposition <= enemyMaxDisposition ? enemyDisposition : enemyMaxDisposition;
-        logMessage("The enemy recovered " + -v + " damage. HP increased to " + enemyDisposition + ".");
+        enemyHP -= v;
+        enemyHP = enemyHP <= enemyMaxHP ? enemyHP : enemyMaxHP;
+        logMessage("The enemy recovered " + -v + " damage. HP increased to " + enemyHP + ".");
       }
       else if (v == 0) {
         logMessage("The enemy's HP remained the same.");
       }
       if (v > 0) {
-        logMessage("The enemy took " + v + " damage. HP reduced to " + (enemyDisposition - v) + ".");
-        enemyDisposition -= v;
+        enemyHP = enemyHP >= 0 ? enemyHP : 0;
+        logMessage("The enemy took " + v + " damage. HP reduced to " + enemyHP + ".");
+        enemyHP -= v;
       }
-      if (enemyDisposition <= 0) {
+      if (enemyHP <= 0) {
+        enemyHP = 0;
         logMessage("The enemy was defeated!", "victory");
+        logMessage(`Party HP: ${partyHP}/${partyMaxHP}`);
       }
     }
 
-    function partyDispositionChange(v) {
+    function partyHPChange(v) {
       if (v < 0) {
-        partyDisposition -= v;
-        partyDisposition = partyDisposition <= partyMaxDisposition ? partyDisposition : partyMaxDisposition;
-        logMessage("The party recovered " + -v + " damage. HP increased to " + partyDisposition + ".");
+        partyHP -= v;
+        partyHP = partyHP <= partyMaxHP ? partyHP : partyMaxHP;
+        logMessage("The party recovered " + -v + " damage. HP increased to " + partyHP + ".");
       }
       else if (v == 0) {
         logMessage("The party's HP remained the same.");
       }
       if (v > 0) {
-        partyDisposition -= v;
-        partyDisposition = partyDisposition >= 0 ? partyDisposition : 0;
-        logMessage("The party took " + v + " damage. HP reduced to " + partyDisposition + ".");
+        partyHP -= v;
+        partyHP = partyHP >= 0 ? partyHP : 0;
+        logMessage("The party took " + v + " damage. HP reduced to " + partyHP + ".");
       }
-      if (partyDisposition <= 0) {
+      if (partyHP <= 0) {
         logMessage("The party was defeated...", "defeat");
+        logMessage(`Enemy HP: ${enemyHP}/${enemyMaxHP}`);
       }
     }
 
@@ -180,23 +184,23 @@
       switch(e) {
         case "attack":
           logMessage("Party attack vs Enemy attack", "turn");
-          enemyDispositionChange(partyTest(0));
-          partyDispositionChange(enemyTest(0));
+          enemyHPChange(partyTest(0));
+          partyHPChange(enemyTest(0));
           break;
         case "defend":
           logMessage("Party attack vs Enemy defend", "turn");
-          enemyDispositionChange(vsTest());
+          enemyHPChange(vsTest());
           break;
         case "tech":
           logMessage("Party attack vs Enemy tech", "turn");
           logMessage("Enemy tech interrupted!");
-          enemyDispositionChange(vsTest());
+          enemyHPChange(vsTest());
           break;
         case "move":
           logMessage("Party attack vs Enemy move", "turn");
           const v = vsTest();
           if (v >= 0) {
-            enemyDispositionChange(v);
+            enemyHPChange(v);
           }
           if (v == -1) {
             logMessage("Party disadvantaged!");
@@ -214,24 +218,24 @@
       switch(e) {
         case "attack":
           logMessage("Party defend vs Enemy attack", "turn");
-          partyDispositionChange(vsTest());
+          partyHPChange(vsTest());
           break;
         case "defend":
           logMessage("Party defend vs Enemy defend", "turn");
-          partyDispositionChange(-partyTest(3));
-          enemyDispositionChange(-enemyTest(3));
+          partyHPChange(-partyTest(3));
+          enemyHPChange(-enemyTest(3));
           break;
         case "tech":
           logMessage("Party defend vs Enemy tech", "turn");
           logMessage("Enemy tech cancelled player defense!");
-          partyDispositionChange(enemyTest(0));
+          partyHPChange(enemyTest(0));
           break;
         case "move":
           logMessage("Party defend vs Enemy move", "turn");
           const v = vsTest();
           if (v >= 0) {
             logMessage("Enemy failed to gain an advantage.")
-            partyDispositionChange(-v);
+            partyHPChange(-v);
           }
           if (v == -1) {
             logMessage("Party disadvantaged!");
@@ -253,22 +257,22 @@
           logMessage("Player tech interrupted!");
           v = vsTest();
           if (v > 0) {
-            partyDispositionChange(v);
+            partyHPChange(v);
           }
           break;
         case "defend":
           logMessage("Party tech vs Enemy defend", "turn");
           logMessage("Party tech cancelled enemy defense!");
-          enemyDispositionChange(partyTest(0));
+          enemyHPChange(partyTest(0));
           break;
         case "tech":
           logMessage("Party tech vs Enemy tech", "turn");
           v = vsTest();
           if (v > 0) {
-            enemyDispositionChange(v);
+            enemyHPChange(v);
           }
           else if (v < 0) {
-            partyDispositionChange(-v);
+            partyHPChange(-v);
           }
           else {
             logMessage("The techs cancelled each other out!");
@@ -278,7 +282,7 @@
           logMessage("Party tech vs Enemy move", "turn");
           v = partyTest(0);
           if (v > 0) {
-            enemyDispositionChange(v);
+            enemyHPChange(v);
           }
           v = enemyTest(0);
           if (v <= 0) {
@@ -304,7 +308,7 @@
           v = vsTest();
           if (v <= 0) {
             logMessage("Party failed to gain an advantage.");
-            partyDispositionChange(-v);
+            partyHPChange(-v);
           }
           else if (v == 1) {
             logMessage("Enemy disadvantaged!");
@@ -320,7 +324,7 @@
           v = vsTest();
           if (v <= 0) {
             logMessage("Party failed to gain an advantage.");
-            enemyDispositionChange(-v);
+            enemyHPChange(-v);
           }
           else if (v == 1) {
             logMessage("Enemy disadvantaged!");
@@ -336,7 +340,7 @@
           v = partyTest(0);
           if (v <= 0) {
             logMessage("Party failed to gain an advantage.");
-            partyDispositionChange(enemyTest(0));
+            partyHPChange(enemyTest(0));
           }
           else if (v == 1) {
             logMessage("Enemy disadvantaged!");
@@ -379,7 +383,7 @@
     }
 
     function compare(p, e) {
-      if (partyDisposition <= 0 || enemyDisposition <= 0) {
+      if (!combatContinue()) {
         return;
       }
       switch(p) {
@@ -398,18 +402,27 @@
       }
     }
 
-    playerTurns = shuffle(playerTurns);
-    console.log(playerTurns);
+    function combatContinue() {
+      return partyHP > 0 && enemyHP > 0;
+    }
+
+    logMessage("Party HP: " + partyHP + " / Power: " + partyPower);
+    logMessage("Enemy HP: " + enemyHP + " / Power: " + enemyPower);
+    
     enemyDeck = ["attack", "defend", "tech", "move"];
 
-    logMessage("Party HP: " + partyDisposition + " / Power: " + partyPower);
-    logMessage("Enemy HP: " + enemyDisposition + " / Power: " + enemyPower);
-
-    for(let i = 0; i < playerTurns.length; i++) {
-      logMessage("=== " + playerTurns[i].p + "'s round ===", "round");
-      enemyTurn = shuffle(enemyDeck);
-      for (let j = 0; j < 3; j++) {
-        compare(playerTurns[i].a[j], enemyTurn[j]);
+    while (partyHP > 0 && enemyHP > 0) {
+      playerTurns = shuffle(playerTurns);
+      console.log(playerTurns);
+      
+      for(let i = 0; i < playerTurns.length; i++) {
+        if (partyHP > 0 && enemyHP > 0) {
+          logMessage("\n=== " + playerTurns[i].p + "'s round ===", "round");
+          enemyTurn = shuffle(enemyDeck);
+          for (let j = 0; j < 3; j++) {
+            compare(playerTurns[i].a[j], enemyTurn[j]);
+          }
+        }
       }
     }
   </script>
