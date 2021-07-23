@@ -72,6 +72,14 @@ body {
     margin-top: 2em;
   }
 
+  .character.active .avatar {
+    border-color: #20B2AA;
+  }
+
+  .character.reserve .avatar {
+    border-color: black;
+  }
+
   .clear {
     clear: both;
   }
@@ -89,7 +97,7 @@ body {
 
   figure img {
     max-width: 100px;
-    border: 2px solid white;
+    border: 3px solid white;
     border-radius: 3px;
   }
 
