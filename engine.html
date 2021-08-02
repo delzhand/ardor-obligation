@@ -1,7 +1,75 @@
 <html>
 <head>
 <title>Combat Engine</title>
+<script>
+  const variables = {
+  playerTurns: [
+    {p: "zekebeau", a: ['attack', 'move', 'tech']},
+    {p: "discrider", a: ['attack', 'defend', 'tech']},
+    {p: "see317", a: ['defend', 'move', 'tech']},
+    {p: "endless_serpents", a: ['defend', 'move', 'tech']},
+    {p: "mono", a: ['move', 'tech', 'attack']},
+  ],
+  enemyHp: 6,
+  enemyAtk: 6,
+  enemies: [
+    {
+      name: 'Taure',
+      tech: 'Axe Chop',
+    },
+  ],
+  partyBonusHP: 0,
+  partyBonusAtk: 0,
+  party: [
+    // {
+    //   name: 'Alexei',
+    //   lv: 7,
+    //   hp: 196,
+    //   maxHp: 196,
+    //   tech: 'Wolf Fang',
+    //   active: true,
+    // },
+    {
+      name: 'Tia',
+      lv: 7,
+      hp: 19,
+      maxHp: 199,
+      tech: 'Ignite',
+      active: true,
+    },
+    {
+      name: 'Hilda',
+      lv: 7,
+      hp: 19,
+      maxHp: 190,
+      tech: 'Split Shot',
+      active: true,
+    },
+    // {
+    //   name: 'Stafford',
+    //   lv: 3,
+    //   hp: 209,
+    //   maxHp: 209,
+    //   tech: 'Rush Strike',
+    //   active: true,
+    // },
+    {
+      name: 'Atma',
+      lv: 5,
+      hp: 15,
+      maxHp: 154,
+      tech: 'Shear',
+      active: true,
+    },
+  ],
+}
+</script>
 <style>
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
     html {
       background: black;
     }
@@ -50,47 +118,142 @@
     .victory {
       font-size: 1.5em;
     }
+
+    .disposition {
+      margin: .5em 0;
+    }
+    .disposition > * {
+      vertical-align: top;
+    }
+
+    .bar {
+      height: 20px;
+      width: 120px;
+      display: inline-block;
+      position: relative;
+      background-color: black;
+      border: 1px solid #FFF;
+      border-radius: 2px;
+    }
+    .bar > .hp {
+      height: 100%;
+      background-color: lightseagreen;
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+    }
+    .bar.damage .old,
+    .bar.recovery .new {
+      animation: blinker 2s linear infinite;
+      animation-timing-function: steps(1);
+      background-color: red;
+      z-index: 1;
+    }
+    .bar.recovery .new {
+      background-color: green;
+    }
+    .bar > .label {
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: right;
+      position: relative;
+      z-index: 4;
+      padding: 0px 3px;
+      font-size: .5em;
+      top: 18px;
+    }
+    .bar.enemy > .label {
+      text-align: left;
+    }
+    .bar.enemy > .hp {
+      left: auto;
+      right: 0;
+    }
+    .nums {
+      display: inline-block;
+      min-width: 40px;
+    }
+    .nums.enemy {
+      text-align: right;
+    }
+
+    #graphic {
+      height: 224px;
+      width: 256px;
+      background: #FFF;
+      transform: scale(2);
+      transform-origin: top left;
+      margin-bottom: 224px;
+      background: url('images/bg_forest.png');
+      background-size: contain;
+      position: relative;
+      display: none;
+    }
+
+    #graphic .pc {
+      position: absolute;
+      z-index: 1;
+      transform: scale(.5);
+    }
 </style>
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
 </head>
 <body>
+  <div id="graphic"></div>
   <section>
     <div id="log"></div>
   </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
   <script>
-    // Enemy Stats
-    let enemyHP = 5;
-    let enemyAtk = 5;
-    let enemies = ['Obela'];
-
-    // Party Stats
-    let partyLvs = [7, 7, 6, 3];
-    let partyHps = [150, 150, 150, 150];
-    let partyMaxHps = [150, 150, 150, 150];
-    let partyMembers = ['Alexei', 'Tia', 'Hilda', 'Stafford'];
-
-    // Input
-    let playerTurns = [
-      {p: "see317", a: ['move', 'attack', 'defend']},
-      {p: "zekebeau", a: ['move', 'defend', 'attack']},
-      {p: "discrider", a: ['move', 'tech', 'defend']},
-      {p: "mono", a: ['move', 'tech', 'defend']},
-      {p: "endless_serpents", a: ['defend', 'attack', 'tech']}
-    ];
-
-    // Derived - do not change
-    let partyAtk = Math.floor(partyLvs.reduce((a,b) => a + b, 0)/4);
-    let partyHP =  Math.floor(partyHps.reduce((a,b) => a + b, 0)/100);
-    let partyMaxHP = Math.floor(partyMaxHps.reduce((a,b) => a + b, 0)/100);
-    let enemyMaxHP = enemyHP;
+    const seededRandom = new Math.seedrandom(JSON.stringify(variables.playerTurns));
+    const partyLvs = [];
+    const partyHps = [];
+    const partyMaxHps = [];
+    variables.party.forEach(p => {
+      if (p.active) {
+        partyLvs.push(p.lv);
+        partyHps.push(p.hp);
+        partyMaxHps.push(p.maxHp);
+      }
+    });
+    const partyAtk = Math.floor(partyLvs.reduce((a,b) => a + b, 0)/4) + variables.partyBonusAtk;
+    const partyMaxHP = Math.floor(partyMaxHps.reduce((a,b) => a + b, 0)/100) + variables.partyBonusHP;
+    const enemyMaxHP = variables.enemyHp;
+    const enemyAtk = variables.enemyAtk;
+    let partyHP =  Math.floor(partyHps.reduce((a,b) => a + b, 0)/100) + variables.partyBonusHP;
+    let enemyHP = enemyMaxHP;
     let partyMod = 0;
     let enemyMod = 0;
+    let playerTurns = variables.playerTurns;
     let partyRoundOrder = [];
     let enemyRoundOrder = [];
+
+    function genImage() {
+      let counter = 0;
+      variables.party.forEach(p => {
+        let x = 190;
+        x += 4 * counter;
+        if (!p.active) {
+          x += 30;
+        }
+        let y = 50;
+        y += 25 * counter;
+        $('#graphic').append(`<div class="pc" style="left: ${x}; top: ${y}"><img src="images/${p.name.toLowerCase()}.gif"></div>`);
+        counter = (counter+1)%4;
+      });
+    }
 
     function shuffle(array) {
       var currentIndex = array.length,  randomIndex;
       while (0 !== currentIndex) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
+        randomIndex = Math.floor(seededRandom() * currentIndex);
         currentIndex--;
         [array[currentIndex], array[randomIndex]] = [
           array[randomIndex], array[currentIndex]];
@@ -99,7 +262,7 @@
     }
 
     function getRandomInt(max) {
-      return Math.floor(Math.random() * max);
+      return Math.floor(seededRandom() * max);
     }
 
     function dieRoll() {
@@ -144,16 +307,42 @@
     }
 
     function logMessage(m, c) {
-      let node = document.createElement("div");
-      if (c) {
-        node.setAttribute('class', c);
+      $('#log').append(`<div class="${c}">${m}</div>`);
+    }
+
+    function logHpBars(op, oe) {
+      if (op === partyHP && oe === enemyHP) {
+        return;
       }
-      var textnode = document.createTextNode(m);
-      node.appendChild(textnode);
-      document.getElementById("log").appendChild(node);
+      $('#log').append(`
+        <div class="disposition">
+          <span class="nums enemy">
+            ${enemyMod == 1 ? '⇑':''}
+            ${enemyMod == 2 ? '⇑⇑':''}
+            ${enemyMod == -1 ? '⇓' : ''}
+            &nbsp;${enemyHP}/${enemyMaxHP}
+          </span>
+          <div class="bar enemy ${oe >= enemyHP ? 'damage' : 'recovery'}">
+            <div class="label">Enemy</div>
+            <div class="old hp" style="width: ${oe / enemyMaxHP * 100}%"></div>
+            <div class="new hp" style="width: ${enemyHP / enemyMaxHP * 100}%"></div>
+          </div>&nbsp;
+          <div class="bar ${op >= partyHP ? 'damage' : 'recovery'}">
+            <div class="label">Party</div>
+            <div class="old hp" style="width: ${op / partyMaxHP * 100}%"></div>
+            <div class="new hp" style="width: ${partyHP / partyMaxHP * 100}%"></div>
+          </div>
+          <span class="nums">${partyHP}/${partyMaxHP}&nbsp;
+            ${partyMod == 1 ? '⇑':''}
+            ${partyMod == 2 ? '⇑⇑':''}
+            ${partyMod == -1 ? '⇓' : ''}
+          </span>
+        </div>
+      `);
     }
 
     function enemyHPChange(v) {
+      const orig = enemyHP;
       if (v < 0) {
         enemyHP -= v;
         enemyHP = enemyHP <= enemyMaxHP ? enemyHP : enemyMaxHP;
@@ -163,8 +352,8 @@
         logMessage("The enemy's HP remained the same.");
       }
       if (v > 0) {
-        enemyHP = enemyHP >= 0 ? enemyHP : 0;
         enemyHP -= v;
+        enemyHP = enemyHP >= 0 ? enemyHP : 0;
         logMessage("The enemy took " + v + " damage. HP reduced to " + enemyHP + ".");
       }
       if (enemyHP <= 0) {
@@ -172,9 +361,11 @@
         logMessage("The enemy was defeated!", "victory");
         logMessage(`Party HP: ${partyHP}/${partyMaxHP}`);
       }
+      logHpBars(partyHP, orig);
     }
 
     function partyHPChange(v) {
+      const orig = partyHP;
       if (v < 0) {
         partyHP -= v;
         partyHP = partyHP <= partyMaxHP ? partyHP : partyMaxHP;
@@ -192,26 +383,39 @@
         logMessage("The party was defeated...", "defeat");
         logMessage(`Enemy HP: ${enemyHP}/${enemyMaxHP}`);
       }
+      logHpBars(orig, enemyHP);
     }
 
     function getPartyMember() {
       if (partyRoundOrder.length == 0) {
-        partyRoundOrder = shuffle([...partyMembers]);
+        partyRoundOrder = shuffle([...variables.party]);
       }
       return partyRoundOrder.pop();
     }
 
     function getEnemy() {
       if (enemyRoundOrder.length == 0) {
-        enemyRoundOrder = shuffle([...enemies]);
-        console.log(enemyRoundOrder);
+        enemyRoundOrder = shuffle([...variables.enemies]);
+        // console.log(enemyRoundOrder);
       }
       return enemyRoundOrder.pop();
     }
 
     function turnText(a, b) {
-      logMessage(`${getPartyMember()} ${a} vs ${getEnemy()} ${b}`, 'turn');
+      const p = getPartyMember();
+      const e = getEnemy();
+      if (a === 'tech') {
+        a = p.tech;
+      }
+      if (b === 'tech') {
+        b = e.tech;
+      }
+      logMessage(`${p.name}'s ${a.toProperCase()} vs ${e.name}'s ${b.toProperCase()}`, 'turn');
     }
+
+    String.prototype.toProperCase = function () {
+      return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    };
 
     function compareAttack(e) {
       turnText('attack', e);
@@ -225,7 +429,7 @@
           break;
         case "tech":
           logMessage("Enemy tech interrupted!");
-          enemyHPChange(vsTest());
+          enemyHPChange(partyTest(0));
           break;
         case "move":
           const v = vsTest();
@@ -282,10 +486,7 @@
       switch(e) {
         case "attack":
           logMessage("Player tech interrupted!");
-          v = vsTest();
-          if (v > 0) {
-            partyHPChange(v);
-          }
+          partyHPChange(enemyTest(0));
           break;
         case "defend":
           logMessage("Party tech cancelled enemy defense!");
@@ -347,7 +548,7 @@
           v = vsTest();
           if (v <= 0) {
             logMessage("Party failed to gain an advantage.");
-            enemyHPChange(-v);
+            enemyHPChange(v);
           }
           else if (v == 1) {
             logMessage("Enemy disadvantaged!");
@@ -431,6 +632,8 @@
     logMessage("Enemy HP: " + enemyHP + " / Atk: " + enemyAtk);
     
     enemyDeck = ["attack", "defend", "tech", "move"];
+
+    genImage();
 
     while (partyHP > 0 && enemyHP > 0) {
       playerTurns = shuffle(playerTurns);
