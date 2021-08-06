@@ -78,12 +78,9 @@ article + article {
   }
 }
 
-.character.active .avatar {
-  border-color: #20B2AA;
-}
-
-.character.reserve .avatar {
-  border-color: black;
+.character.reserve .avatar,
+.character.reserve .partner {
+    filter: grayscale(1);
 }
 
 .clear {
