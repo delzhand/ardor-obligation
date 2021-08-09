@@ -1,0 +1,342 @@
+<!-- You inspected the page source? Good for you! Send me a PM on the forums and let me know you saw this message, and you'll get a special prize! -->
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<link href="status2.css" rel="stylesheet">
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.scrollto@2.1.3/jquery.scrollTo.min.js"></script>
+
+<title>Party Status</title>
+
+</head>
+<body>
+
+<div id="nav">
+  <div class="container">
+    <ul>
+      <li><a href="#party">Party</a></li>
+      <li><a href="#inventory">Inventory</a></li>
+      <li><a href="#keyitems">Key Items</a></li>
+      <li><a href="#allies">Allies</a></li>
+      <li><a href="#quests">Quests</a></li>
+      <li><a href="#shop">Shop</a></li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="container">
+  <section id="party">
+    <div id="party-list" class="flex">
+    </div>
+    <div class="party">
+      <!-- <div><div class="label">Party ATK</div> <span id="patk"></span> ⚔</div> -->
+      <div><div class="label">Party HP</div> <span id="php"></span> ❤</div>
+      <div><div class="label">Mail</div> <span id="mail"></span> ✉</div>
+      <div><div class="label">PostTokens</div> <span id="token"></span> ❇︎</div>
+    </div>
+  </section>
+
+  <section id="inventory">
+    <div class="window-name">Inventory</div>
+    <div id="inventory-list" class="flex"></div>
+  </section>
+
+  <section id="keyitems">
+    <div class="window-name">Key Items</div>
+    <div id="keyitem-list" class="flex"></div>
+  </section>
+
+  <section id="allies"> 
+    <div class="window-name">Allies</div>
+    <div id="ally-list" class="flex"></div>
+  </section>
+    
+  <section id="quests"> 
+    <div class="window-name">Side Quests</div>
+    <div id="quest-list" class="flex">
+    </div>
+  </section>
+
+  <section id="shop"> 
+    <div class="window-name">PostToken Shop</div>
+    <div id="shop-list" class="flex">
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const pcs = [
+    // {
+    //   name: 'Alexei',
+    //   altname: '(Whisper)',
+    //   image: 'alexei3.png',
+    //   job: 'Fighter',
+    //   lv: 7,
+    //   hp: 196,
+    //   maxHp: 196,
+    //   eqp: 'Longsword',
+    //   nature: 'Confident',
+    //   status: 'Good',
+    //   loyalty: null,
+    //   active: true,
+    // },
+    {
+      name: 'Tia',
+      altname: '(Sleet)',
+      image: 'tia2.jpeg',
+      job: 'Fire Mage',
+      xp: 0,
+      hp: 80,
+      maxHp: 222,
+      eqp: 'Kaiser Knuckle',
+      nature: 'Cautious, Loyal',
+      status: 'Scalding Curse (25%), Injured',
+      loyalty: null,
+      active: true,
+      attack: 4, tech: 7, move: 5, defend: 3, weapon: 2, belts: 9
+    },
+    {
+      name: 'Gandry',
+      partnername: '& Royal',
+      image: 'gandry2.jpeg',
+      partner: 'royal.jpg',
+      job: 'Beastmaster',
+      xp: 0,
+      hp: 210,
+      maxHp: 210,
+      eqp: 'Hunting Knife',
+      nature: 'Kind, Impulsive',
+      status: 'Good',
+      loyalty: 2,
+      active: true,
+      attack: 4, tech: 8, move: 4, defend: 6, weapon: 1, belts: 10
+    },
+    {
+      name: 'Hilda',
+      image: 'hilda2.jpeg',
+      job: 'Archer',
+      xp: 0,
+      hp: 125,
+      maxHp: 203,
+      eqp: 'Hunter\'s Bow',
+      nature: 'Charming, Flirtatious',
+      status: 'Good',
+      loyalty: 5,
+      active: true,
+      attack: 5, tech: 3, move: 7, defend: 3, weapon: 2,  belts: 7
+    },
+    {
+      name: 'Atma',
+      image: 'atma2.jpeg',
+      job: 'Wind Mage',
+      xp: 10,
+      hp: 58,
+      maxHp: 162,
+      eqp: 'Silver Hatchet',
+      nature: 'Curious, Mysterious',
+      status: 'Incomprehensible (75%), Injured',
+      loyalty: '4',
+      active: true,
+      attack: 3, tech: 7, move: 4, defend: 5, weapon: 2, belts: 4
+    }
+  ];
+  const allies = [
+    {
+      name: 'Ophelia',
+      image: 'ophelia.jpeg',
+      loyalty: 7,
+      job: 'Herbalist',
+      lv: 2,
+      nature: 'Studious',
+      loc: 'Runo'
+    },
+    {
+      name: 'Dhara',
+      image: 'dhara.jpeg',
+      loyalty: 5,
+      job: 'Blacksmith',
+      nature: 'Straightforward',
+      loc: 'Dooreyt'
+    },
+    {
+      name: 'Opta',
+      image: 'opta.jpeg',
+      loyalty: 4,
+      job: 'Priest',
+      nature: 'Optimistic',
+      loc: 'Dooreyt'
+    },
+    {
+      name: 'Helmuth',
+      image: 'helmuth.jpeg',
+      loyalty: 3,
+      job: 'Cook',
+      nature: 'Friendly',
+      loc: 'Yaldroth Camp'
+    }
+  ];
+  const inventory = [
+    {item: 'Saffron Honey (Hilda)', desc: 'eat to gain 70 XP (Hilda only)'},
+    {item: 'Heal', desc: 'replenish HP completely for a single target'},
+  ];
+  const keyItems = [
+    {item: 'Heirloom Crest (Alexei)', desc: 'inspect for more information'},
+    {item: 'Mysterious Map', desc: 'inspect for more information'},
+    {item: 'Decoded Letter (Tia)', desc: 'evidence of assassination plot'},
+    {item: 'Mageblessing Recipe (Tia)', desc: 'details on a potion for mage\'s curse'},
+    {item: 'Bledan Widgets', desc: 'perhaps a historian could tell you more'}
+  ];
+  const shop = [
+    {item: 'Heroic Poem', desc: 'gift to someone to increase loyalty', cost: 1},      // 1
+    {item: 'Smoky Spices', desc: 'gift to someone to increase loyalty', cost: 1},     // 2
+    {item: 'Violet Dye', desc: 'gift to someone to increase loyalty', cost: 1},       // 3
+    {item: 'Scarab Brooch', desc: 'gift to someone to increase loyalty', cost: 1},    // 4
+    {item: 'Feline Carving', desc: 'gift to someone to increase loyalty', cost: 1},   // 5
+    {item: 'Pressed Leaf', desc: 'gift to someone to increase loyalty', cost: 1},     // 6
+    {item: 'Strong Tea', desc: 'gift to someone to increase loyalty', cost: 1},       // 7
+    {item: 'Unique Seashell', desc: 'gift to someone to increase loyalty', cost: 1},  // 8
+    {item: 'Ancient Coin', desc: 'gift to someone to increase loyalty', cost: 1},     // 9
+    {item: 'Fossilized Bone', desc: 'gift to someone to increase loyalty', cost: 1},  // 10
+    {item: 'Lens of Truth', desc: 'reveal hidden consequences of a vote option', cost: 2},
+    {item: 'Heal', desc: 'replenish HP completely for a single target', cost: 2},
+    {item: 'Vigor Drink', desc: 'increases all combat stats by 1 for the next encounter', cost: 2},
+    {item: 'Veil of Night', desc: 'increases party HP by 1 for the next encounter', cost: 2},
+    {item: 'Stuffed Pepper', desc: 'increases max HP by 50 for one party member', cost: 2},
+    {item: 'Mastery Scroll', desc: 'increases XP by 50 for one party member', cost: 2},
+    {item: 'Dodge Feather', desc: 'ignore one instance of damage', cost: 1},
+    {item: 'Cursed Horn', desc: 'reduce enemy ATK by 2 for the next encounter', cost: 2}
+  ];
+  const quests = [
+    {name: 'Sigil of Hollos', lv: 8, desc: 'Summon Hollos and face judgment', status: 'open', reward: ''},
+    {name: 'The Taure\'s Lair', lv: 6, desc: 'Find and defeat the taure for Helmuth<br/>(limited)', status: 'open', reward: ''},
+    {name: 'Ruins of Bleda', lv: 5, desc: 'Search the ruins for a rare reagent', status: 'complete', reward: 'Atma joined'}
+  ];
+  const bonusHp = 0;
+  const bonusAtk = 0;
+  const mail = 12;
+  const token = 4;
+
+  function loyalty(v) {
+    if (v === null) {
+      return '';
+    }
+    return `<div class="loyalty"><span class="label">Loyalty</span> ${v}/10</div>`;
+  }
+
+  pcs.forEach(pc => {
+    const lv = pc.attack + pc.tech + pc.move + pc.defend;
+    const tnl = (lv - 14) * 10;
+    $('#party-list').append(`
+    <article class="character clearfix ${pc.active ? 'active' : 'reserve'}">
+      
+      <figure>
+        <img class="avatar" src="images/${pc.image}">
+        ${pc.partner ? '<img class="partner" src="images/' + pc.partner + '">' : '' }
+        ${loyalty(pc.loyalty)}
+      </figure>
+
+      <div class="stats">
+        <div class="namewrapper">
+          <div class="level"><div class="label">Lv</div> ${pc.attack + pc.tech + pc.move + pc.defend}</div>
+          <div class="name">
+            ${pc.name}
+            ${pc.altname ? '<span class="altname">' + pc.altname + '</span>' : ''}
+          </div>
+          ${pc.partnername ? '<div class="partnername">' + pc.partnername + '</div>' : ''}
+        </div>
+
+        <div class="top">
+          <div><div class="label">Job</div> ${pc.job}</div>
+        </top>
+        
+        <div class="bar-stats">
+          <div><div class="label">Xp</div> <div class="val-right">${pc.xp}/${tnl}</div></div>    
+          <div class="bar"><div class="xpbar" style="width: ${pc.xp/tnl*100}%;"></div></div>
+          <div><div class="label">Hp</div> <div class="val-right">${pc.hp}/${pc.maxHp}</div></div>
+          <div class="bar"><div class="hpbar" style="width: ${pc.hp/pc.maxHp*100}%;"></div></div>
+        </div>
+
+        <div class="combat-stats">
+          <div><div class="label">Attack</div> <div class="val-right">${pc.attack} <span class="bonus">+${pc.weapon}</span></div></div>
+          <div><div class="label">Tech</div> <div class="val-right">${pc.tech}</div></div>
+          <div><div class="label">Move</div> <div class="val-right">${pc.move}</div></div>
+          <div><div class="label">Defend</div> <div class="val-right">${pc.defend}</div></div>
+          <div><div class="label">Belts</div> <div class="val-right">${pc.belts}</div></div>
+        </div>
+
+        <div class="wide-stats">
+          <div><div class="label">Arms</div>${pc.eqp}</div>
+          <div><div class="label">Nature</div>${pc.nature}</div>
+          <div><div class="label">Status</div>${pc.status}</div>
+        </div>
+      </div>
+
+    </article>
+    `);
+  });
+
+  allies.forEach(ally => {
+    $('#ally-list').append(`
+      <article class="clearfix">
+        <figure>
+          <img src="images/${ally.image}">
+          ${loyalty(ally.loyalty)}
+        </figure>
+        <div class="ally-stats">
+          <div class="name">${ally.name}</div>
+          <div><span class="label">Job</span> ${ally.job}</div>
+          <div><span class="label">Loc</span> ${ally.loc}</div>
+        </div>
+      </article>    
+    `);
+  })
+
+  shop.forEach(item => {
+    $('#shop-list').append(`<div class="item"><span>${item.item} - ${item.cost}❇︎</span><br><span class="detail">${item.desc}</span></div>`);
+  });
+
+  inventory.forEach(item => {
+    $('#inventory-list').append(`<div class="item">${item.item}<br><span class="detail">${item.desc}</span></div>`);
+  });
+
+  keyItems.forEach(item => {
+    $('#keyitem-list').append(`<div class="item">${item.item}<br><span class="detail">${item.desc}</span></div>`);
+  });
+
+  quests.forEach(item => {
+    $('#quest-list').append(`
+      <div class="quest item">
+        <div><b>${item.name}</b> - Lv ${item.lv} - ${item.status}</div>
+        <div class="detail">${item.desc}</div>
+      </div>
+    `);
+  })
+  
+  let partyHp = 0;
+  let partyMaxHp = 0;
+  pcs.forEach(pc => {
+    if (pc.active) {
+      partyHp += pc.hp;
+      partyMaxHp += pc.maxHp;
+    }
+  });
+  partyHp = Math.floor(partyHp/100);
+  partyMaxHp = Math.floor(partyMaxHp/100);
+  let partyHpTxt = `${partyHp}/${partyMaxHp}`;
+  if (bonusHp) {
+    partyHpTxt += ` <span class="bonus">(${partyHp+bonusHp}/${partyMaxHp+bonusHp})</span>`;
+  }
+  $('#php').append(partyHpTxt);
+  $('#mail').append(mail + '/15');
+  $('#token').append(token);
+
+</script>
+</body>
+<html>
