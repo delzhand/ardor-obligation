@@ -1,0 +1,570 @@
+<html>
+<head>
+<title>Dungeon Engine (Aldove's Manor)</title>
+<script>
+  const lockFreq = 15;
+  const variables = {
+    dungeonName: "Aldove's Manor",
+    partyHp: 8,
+    partyMaxHP: 8,
+    partyBonus: 0,
+    enemyHP: 10,
+    midbossName: "Aldove's Elite Guards",
+    keys: 0,
+    time: 75,
+    playerRooms: [
+      {name: "mrpaku", rooms: ['side room', 'large chamber', 'rest stop']},
+      {name: "see317", rooms: ['small chamber', 'side room', 'vault']},
+      {name: "endless_serpents", rooms: ['rest stop', 'small chamber', 'side room']},
+      // {name: "delzhand", rooms: ['hallway', 'small chamber', 'hallway']},
+    ]
+  };
+</script>
+<style>
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
+    html {
+      background: black;
+    }
+  
+    .wrapper {
+      width: 700px;
+    }
+  
+    section {
+      background: radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      background: -moz-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      background: -webkit-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      background: -o-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      border: 5px solid #FFF;
+      -moz-border-radius: 15px;
+      -webkit-border-radius: 15px;
+      border-radius: 15px;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      padding: 20px;
+      font: 16px arial;
+      color: white;
+      position: relative;
+    }
+
+    #log {
+      margin-top: -.5em;
+    }
+
+    .round {
+      font-weight: bold;
+      font-size: 1.25em;
+      margin-top: 3em;
+      border-bottom: 2px solid #FFF;
+    }
+
+    .turn {
+      /* text-align: center; */
+      margin-top: .5em;
+    }
+
+    .err {
+      color: gray;
+    }
+
+    .defeat,
+    .victory {
+      font-size: 1.5em;
+    }
+
+    .disposition {
+      margin: 1em 0;
+      text-align: center;
+    }
+    .disposition > * {
+      vertical-align: top;
+    }
+
+    .bar {
+      height: 2em;
+      width: 40%;
+      display: inline-block;
+      position: relative;
+      background-color: black;
+      border: 1px solid #FFF;
+      border-radius: 2px;
+    }
+    .bar > .hp {
+      height: 100%;
+      background-color: lightseagreen;
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+    }
+    .bar.damage .old,
+    .bar.recovery .new {
+      animation: blinker 2s linear infinite;
+      animation-timing-function: steps(1);
+      background-color: red;
+      z-index: 1;
+    }
+    .bar.recovery .new {
+      background-color: green;
+    }
+    .bar > .label {
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: right;
+      position: relative;
+      z-index: 4;
+      padding: 0px 3px;
+      font-size: .5em;
+      top: 18px;
+    }
+    .bar.enemy > .label {
+      text-align: left;
+    }
+    .bar.enemy > .hp {
+      left: auto;
+      right: 0;
+    }
+    .nums {
+      display: inline-block;
+      min-width: 40px;
+    }
+    .nums.enemy {
+      text-align: right;
+    }
+
+    .loot {
+      margin-top: 1em;
+    }
+
+    #layout,
+    #layout-demo {
+      font-size: 0;
+      margin-bottom: 30px;
+    }
+    .layout-room {
+      display: inline-block;
+      border: 2px solid red;
+      background-color: black;
+      vertical-align: bottom;
+      height: 48px;
+      width: 48px;
+      margin-right: -2px;
+      position: relative;
+    }
+    .layout-room.reached,
+    .layout-room.reached::after {
+      border-color: green;
+    }
+    .small-chamber {
+      border-top-left-radius: 50%;
+      border-top-right-radius: 50%;
+    }
+    .large-chamber {
+      height: 64px;
+      width: 64px;
+      border-top-left-radius: 50%;
+      border-top-right-radius: 50%;
+    }
+    .locked-door {
+      height: 24px;
+      width: 6px;
+      background: yellow;
+      z-index: 1;
+    }
+    .rest-stop {
+      height: 24px;
+      width: 24px;
+      background: green;
+    }
+    .rest-stop::after {
+      content: '';
+      border: 2px solid red;
+      background: green;
+      position: absolute;
+      height: 18px;
+      width: 24px;
+      bottom: 24px;
+      left: -2px;
+      border-top-left-radius: 25%;
+      border-top-right-radius: 25%;
+      border-bottom: 0;
+    }
+    .side-room {
+      height: 32px;
+      width: 32px;
+    }
+    .hallway {
+      height: 24px;
+      width: 64px;
+    }
+    .vault {
+      height: 72px;
+    }
+    .trap-room {
+      background-color: purple;
+    }
+    .sanctuary {
+      height: 32px;
+      width: 32px;
+      background: palegreen;
+    }
+    .sanctuary::after {
+      content: '';
+      border: 2px solid white;
+      background: palegreen;
+      position: absolute;
+      height: 28px;
+      width: 32px;
+      bottom: 32px;
+      left: -2px;
+      border-top-left-radius: 25%;
+      border-top-right-radius: 25%;
+      border-bottom: 0;
+    }
+    .midboss {
+      height: 72px;
+      width: 72px;
+      border-top-left-radius: 50%;
+      border-top-right-radius: 50%;
+    }
+    .layout-room .source {
+      font-size: 10px;
+      color: #FFF;
+      background: black;
+      display: inline-block;
+      position: absolute;
+      bottom: -14px;
+      max-width: 100%;
+      overflow: hidden;
+    }
+</style>
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+  <section class="container">
+    <!-- <div id="layout-demo">
+      <div class="layout-room small-chamber"></div>
+      <div class="layout-room large-chamber"></div>
+      <div class="layout-room locked-door"></div>
+      <div class="layout-room rest-stop"></div>
+      <div class="layout-room side-room"></div>
+      <div class="layout-room hallway"></div>
+      <div class="layout-room vault"></div>
+      <div class="layout-room trap-room"></div>
+      <div class="layout-room sanctuary"></div>
+      <div class="layout-room midboss"></div>
+      <div class="layout-room save-crystal"></div>
+      <div class="layout-room boss"></div>
+    </div> -->
+    <div id="layout">
+    </div>
+    <div id="log"></div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
+  <script>
+    const genRandom = new Math.seedrandom(variables.dungeonName);
+    const eventRandom = new Math.seedrandom(JSON.stringify(variables.playerRooms));
+    
+    const lootTable = [
+      {item: 'Lens of Truth', desc: 'reveal hidden consequences of a vote option', cost: 2},
+      {item: 'Heal', desc: 'replenish HP completely for a single target', cost: 2},
+      {item: 'Vigor Drink', desc: 'increases all combat stats by 1 for the next encounter', cost: 2},
+      {item: 'Veil of Night', desc: 'increases party HP by 1 for the next encounter', cost: 2},
+      {item: 'Stuffed Pepper', desc: 'increases max HP by 50 for one party member', cost: 2},
+      {item: 'Mastery Scroll', desc: 'increases XP by 50 for one party member', cost: 2},
+      {item: 'Dodge Feather', desc: 'ignore one instance of damage', cost: 1},
+      {item: 'Cursed Horn', desc: 'reduce enemy ATK by 2 for the next encounter', cost: 2}
+    ];
+
+    function getRandomInt(max, isGen) {
+      if (isGen) {
+        return Math.floor(genRandom() * max);
+      }
+      return Math.floor(eventRandom() * max);
+    }
+
+    function getLoot() {
+      return lootTable[getRandomInt(lootTable.length - 1)].item;
+    }
+
+    function shuffle(array, isGen) {
+      var currentIndex = array.length,  randomIndex;
+      while (0 !== currentIndex) {
+        randomIndex = getRandomInt(currentIndex, isGen);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    function logMessage(m, c) {
+      $('#log').append(`<div class="${c}">${m}</div>`);
+    }
+
+    function outputStatus() {
+      logMessage(`Time Remaining: ${variables.time} | Party HP: ${variables.partyHp} | Morale Bonus: ${variables.partyBonus} | Enemy HP: ${variables.enemyHP} | Keys: ${variables.keys}`);
+    }
+
+    function fillerRoom(rooms) {
+      let room = {
+        source: 'filler',
+        type: roomTypes[getRandomInt(6, true)],
+        locked: false
+      };
+      if (rooms.length >= 5) {
+        if (getRandomInt(100, true) <= lockFreq) {
+          room.locked = true;
+          room.hasLock = true;
+        }
+      }
+      rooms.push(room);
+    }
+
+    function chaosRoom(rooms) {
+      let room = {
+        source: 'chaos!',
+        type: roomTypes[getRandomInt(9, true)],
+        locked: false
+      };
+      if (rooms.length >= 5) {
+        if (getRandomInt(100, true) <= lockFreq) {
+          room.locked = true;
+        }
+      }
+      rooms.push(room);
+    }
+
+    let dungeonLength = 18 + getRandomInt(10, true);
+    let shuffledOrder = variables.playerRooms; //shuffle(variables.playerRooms, true);
+    let rooms = [];
+    let generateIndex = 0;
+    let roomTypes = [
+      'small chamber',
+      'large chamber',
+      'rest stop',
+      'side room',
+      'hallway',
+      'vault',
+      'trap room',
+      'sanctuary',
+      'midboss',
+      'boss'
+    ]
+    for (let i = 0; i < shuffledOrder.length; i++) {
+      for (let j = 0; j < shuffledOrder[i].rooms.length; j++) {
+        let room = {};
+        if (rooms.length > 0 && rooms.length % 7 === 0) {
+          chaosRoom(rooms);
+        }
+        room = {
+          source: shuffledOrder[i].name,
+          type: shuffledOrder[i].rooms[j],
+          locked: false
+        };
+        if (rooms.length >= 5) {
+          if (getRandomInt(100, true) <= 15) {
+            room.locked = true;
+          }
+        }
+        rooms.push(room);
+      }
+    }
+    while (rooms.length < dungeonLength) {
+      if (rooms.length > 0 && rooms.length % 7 === 0) {
+        chaosRoom(rooms);
+      }
+      else {
+        fillerRoom(rooms);
+      }
+    }
+    rooms.push({
+      source: 'fixed',
+      type: 'save crystal',
+      locked: true
+    })
+    rooms.push({
+      source: 'fixed',
+      type: 'boss',
+      locked: false
+    });
+    // console.log(rooms);
+
+    let traversal = 0;
+    let backtrack = false;
+    let victory = false;
+    let defeat = false;
+    let loot  = [];
+    outputStatus();
+
+    while (!victory && !defeat) {
+      let currentRoom = rooms[traversal];
+      logMessage(`The party entered room ${traversal + 1} (${currentRoom.type} | ${currentRoom.source})`, 'round');
+      let x = getRandomInt(100);
+      let l = false;
+      switch (currentRoom.type) {
+        case 'small chamber':
+          variables.time -= 2.5;
+          if (x < 85) {
+            logMessage("The party encountered a weak enemy!")
+            variables.partyHp -= 1;
+            variables.partyBonus += 1;
+          }
+          else {
+            logMessage("The party encountered a dangerous enemy!");
+            variables.partyHp -= 2;
+            variables.partyBonus -= 1;
+          }
+          break;
+        case 'large chamber':
+          variables.time -= 5;
+          if (x < 50) {
+            logMessage("The party encounted a strong enemy!");
+            variables.partyHp -= 2;
+            variables.partyBonus +1;
+          }
+          else {
+            logMessage("The party found a key!");
+            variables.keys += 1;
+            backtrack = false;
+          }
+          break;
+        case 'rest stop':
+          variables.time -= 2.5;
+          logMessage("The party rested.");
+          variables.partyHp += 2;
+          if (variables.partyHp > variables.partyMaxHP) {
+            variables.partyHp = variables.partyMaxHP;
+          }
+          break;
+        case 'side room':
+          variables.time -= (getRandomInt(4.5) + 1.5);
+          if (x < 50) {
+            l = getLoot();
+            loot.push(l);
+            logMessage(`The party found a ${l}!`);
+          }
+          else if (x < 75) {
+            logMessage("The party found a key!");
+            variables.keys += 1;
+            backtrack = false;
+          }
+          else {
+            logMessage("The party didn't find anything...");
+            variables.enemyHP += 1;
+
+          }
+          break;
+        case 'hallway':
+          variables.time -= 1;
+          variables.enemyHP += 1;
+          break;
+        case 'vault':
+          variables.time -= 5;
+          logMessage("The party found a key!");
+          variables.keys += 1;
+          backtrack = false;
+          if (x < 20) {
+            l = getLoot();
+            loot.push(l);
+            logMessage(`The party found a ${l}!`);
+          }
+          break;
+        case 'trap room':
+          logMessage("The party got stuck in a trap!");
+          variables.time -= 5;
+          variables.enemyHP += 2;
+          variables.partyBonus -= 1;
+          break;
+        case 'sanctuary':
+          logMessage("The party rested and gathered their strength!");
+          variables.time -= 3.5;
+          variables.partyHp += 4;
+          variables.partyBonus += 2;
+          if (variables.partyHp > variables.partyMaxHP) {
+            variables.partyHp = variables.partyMaxHP;
+          }
+          break;
+        case 'midboss':
+          logMessage(`The party encounted ${variables.midbossName}!`)
+          variables.time -= 6;
+          variables.partyHp -=3;
+          break;
+        case 'save crystal':
+          logMessage("The party saved their progress. All HP restored!");
+          variables.partyHp = variables.partyMaxHP;
+          break;
+        case 'boss':
+          logMessage("The party reached the boss!");
+          victory = true;
+          break;
+      }
+      if (!backtrack) {
+        let nextRoom = rooms[traversal + 1];
+        if (!nextRoom) {
+          victory = true;
+          continue;
+        }
+        if (nextRoom.locked && variables.keys > 0) {
+          logMessage("The party unlocked a door.");
+          variables.keys -= 1;
+          rooms[traversal + 1].locked = false;
+          traversal++;
+        }
+        else if (nextRoom.locked && variables.keys === 0) {
+          logMessage("The door is locked, but the party lacks a key. Forcing the door open...");
+          // backtrack = true;
+          variables.time -= 5;
+          traversal++;
+        }
+        else {
+          traversal++;
+        }
+      }
+      if (backtrack && traversal > 0) {
+        traversal--;
+      }
+      else if (backtrack && traversal === 0) {
+        backtrack = false;
+        traversal++;
+      }
+      outputStatus();
+      if (variables.time <= 0) {
+        logMessage("The party ran out of time...");
+        defeat = true;
+      }
+      if (variables.partyHp <= 0) {
+        logMessage("The party was defeated...");
+        defeat = true;
+      }
+    }
+
+    logMessage(`Loot: ${loot.join(',')}`, 'loot');
+
+    for (let i = 0; i < rooms.length; i++) {
+      let r = rooms[i];
+      if (r.hasLock) {
+        $('#layout').append(`<div class="layout-room locked-door"></div>`);
+      }
+      if (i < traversal) {
+        $('#layout').append(`<div class="layout-room reached ${r.type.replace(' ', '-')}"><div class="source">${r.source}</div></div>`);
+      }
+      else {
+        $('#layout').append(`<div class="layout-room ${r.type.replace(' ', '-')}"><div class="source">${r.source}</div></div>`);
+      }
+    }
+
+  </script>
+</body>
+</html>
