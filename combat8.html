@@ -1,0 +1,737 @@
+<html>
+<head>
+<title>Combat Engine (vs Adjin, Tyree)</title>
+<script>
+  const variables = {
+  playerTurns: [
+    {p: "endless_serpents", a: ['atma:tech', 'tia:attack', 'hilda:move']},
+    {p: "see317", a: ['atma:tech', 'gandry:defend', 'hilda:attack']},
+    {p: "delzhand", a: ['gandry:tech', 'atma:defend', 'hilda:attack']},
+  ],
+  enemyHp: 17,
+  enemyAtk: 6,
+  enemies: [
+    {
+      name: 'Adjin',
+      techName: 'Crushing Judgment',
+    },
+    {
+      name: 'Tyree',
+      techName: 'Heaven\'s Bolt',
+    }
+  ],
+  xpMultiplier: 2.25,
+  partyBonusHP: 4,
+  partyBonusAtk: 1,
+  party: [
+    {
+      name: 'Tia',
+      hp: 240,
+      maxHp: 240,
+      attack: 4+2,
+      tech: 8,
+      move: 5,
+      defend: 3,
+      techName: 'Ignite',
+      active: true,
+      xp: 0,
+    },
+    {
+      name: 'Gandry',
+      hp: 222,
+      maxHp: 222,
+      attack: 4+1,
+      tech: 8,
+      move: 4,
+      defend: 6,
+      techName: 'Primal Instinct',
+      active: true,
+      xp: 0
+    },
+    {
+      name: 'Hilda',
+      hp: 217,
+      maxHp: 217,
+      attack: 5+2,
+      tech: 4,
+      move: 7,
+      defend: 4,
+      techName: 'Split Shot',
+      active: true,
+      xp: 0
+    },
+    {
+      name: 'Atma',
+      hp: 173,
+      maxHp: 173,
+      attack: 3+2,
+      tech: 7,
+      move: 5,
+      defend: 5,
+      techName: 'Shear',
+      active: true,
+      xp: 0
+    },
+  ],
+}
+</script>
+<style>
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
+    html {
+      background: black;
+    }
+  
+    .wrapper {
+      width: 700px;
+    }
+  
+    section {
+      background: radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      background: -moz-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      background: -webkit-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      background: -o-radial-gradient(-180px 0px,circle ,#0053ad 300px,#001b85 500px,#000223);
+      border: 5px solid #FFF;
+      -moz-border-radius: 15px;
+      -webkit-border-radius: 15px;
+      border-radius: 15px;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      padding: 20px;
+      font: 16px arial;
+      color: white;
+      position: relative;
+    }
+
+    #log {
+      margin-top: -.5em;
+    }
+
+    .round {
+      font-weight: bold;
+      font-size: 1.25em;
+      margin-top: 3em;
+      border-bottom: 2px solid #FFF;
+    }
+
+    .turn {
+      /* text-align: center; */
+      margin-top: .5em;
+    }
+
+    .err {
+      color: gray;
+    }
+
+    .defeat,
+    .victory {
+      font-size: 1.5em;
+    }
+
+    .disposition {
+      margin: 1em 0;
+      text-align: center;
+    }
+    .disposition > * {
+      vertical-align: top;
+    }
+
+    .bar {
+      height: 2em;
+      width: 40%;
+      display: inline-block;
+      position: relative;
+      background-color: black;
+      border: 1px solid #FFF;
+      border-radius: 2px;
+    }
+    .bar > .hp {
+      height: 100%;
+      background-color: lightseagreen;
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 0;
+    }
+    .bar.damage .old,
+    .bar.recovery .new {
+      animation: blinker 2s linear infinite;
+      animation-timing-function: steps(1);
+      background-color: red;
+      z-index: 1;
+    }
+    .bar.recovery .new {
+      background-color: green;
+    }
+    .bar > .label {
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-align: right;
+      position: relative;
+      z-index: 4;
+      padding: 0px 3px;
+      font-size: .5em;
+      top: 18px;
+    }
+    .bar.enemy > .label {
+      text-align: left;
+    }
+    .bar.enemy > .hp {
+      left: auto;
+      right: 0;
+    }
+    .nums {
+      display: inline-block;
+      min-width: 40px;
+    }
+    .nums.enemy {
+      text-align: right;
+    }
+
+    #graphic {
+      height: 224px;
+      width: 256px;
+      background: #FFF;
+      transform: scale(2);
+      transform-origin: top left;
+      margin-bottom: 224px;
+      background: url('images/bg_forest.png');
+      background-size: contain;
+      position: relative;
+      display: none;
+    }
+
+    #graphic .pc {
+      position: absolute;
+      z-index: 1;
+      transform: scale(.5);
+    }
+</style>
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+</head>
+<body>
+  <section class="container">
+    <div id="log"></div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
+  <script>
+    const seededRandom = new Math.seedrandom(JSON.stringify(variables.playerTurns));
+    const partyLvs = [];
+    const partyHps = [];
+    const partyMaxHps = [];
+    variables.party.forEach(p => {
+      if (p.active) {
+        partyLvs.push(p.lv);
+        partyHps.push(p.hp);
+        partyMaxHps.push(p.maxHp);
+      }
+    });
+    // const partyAtk = Math.floor(partyLvs.reduce((a,b) => a + b, 0)/4) + variables.partyBonusAtk;
+    const partyMaxHP = Math.floor(partyMaxHps.reduce((a,b) => a + b, 0)/100) + variables.partyBonusHP;
+    const enemyMaxHP = variables.enemyHp;
+    const enemyAtk = variables.enemyAtk;
+    let partyHP =  Math.floor(partyHps.reduce((a,b) => a + b, 0)/100) + variables.partyBonusHP;
+    let enemyHP = enemyMaxHP;
+    let partyMod = 0;
+    let enemyMod = 0;
+    let playerTurns = variables.playerTurns;
+    let partyRoundOrder = [];
+    let enemyRoundOrder = [];
+
+    function genImage() {
+      let counter = 0;
+      variables.party.forEach(p => {
+        let x = 190;
+        x += 4 * counter;
+        if (!p.active) {
+          x += 30;
+        }
+        let y = 50;
+        y += 25 * counter;
+        $('#graphic').append(`<div class="pc" style="left: ${x}; top: ${y}"><img src="images/${p.name.toLowerCase()}.gif"></div>`);
+        counter = (counter+1)%4;
+      });
+    }
+
+    function shuffle(array) {
+      var currentIndex = array.length,  randomIndex;
+      while (0 !== currentIndex) {
+        randomIndex = Math.floor(seededRandom() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]];
+      }
+      return array;
+    }
+
+    function getRandomInt(max) {
+      return Math.floor(seededRandom() * max);
+    }
+
+    function dieRoll() {
+      return getRandomInt(6);
+    }
+
+    function getSuccesses(d, ob = 0) {
+      let successes = 0;
+      const rolls = [];
+      for (let i = 0; i < d; i++) {
+        const roll = dieRoll();
+        rolls.push(roll); 
+        if (roll >= 4) {
+          successes++;
+        }
+      }
+      console.log({dice: d, rawSuccesses: successes, obstacle: ob, realSuccesses: successes - ob, rolls});
+      return successes;
+    }
+
+    function indTest(d1, ob) {
+      return Math.max(0, getSuccesses(d1, ob) - ob);
+    }
+
+    function vsTest(pv) {
+      const arr = [];
+      arr.push(getSuccesses(pv + partyMod + variables.partyBonusAtk));
+      arr.push(getSuccesses(enemyAtk + enemyMod));
+      arr.push(arr[0] - arr[1]);
+      return arr;
+    }
+
+    function enemyTest(o) {
+      const x = indTest(enemyAtk + enemyMod, o);
+      enemyMod = 0;
+      return x;
+    }
+
+    function partyTest(pv, o) {
+      const x = indTest(pv + partyMod, o) + variables.partyBonusAtk;
+      partyMod = 0;
+      return x;
+    }
+
+    function logMessage(m, c) {
+      $('#log').append(`<div class="${c}">${m}</div>`);
+    }
+
+    function logHpBars(op, oe) {
+      if (op === partyHP && oe === enemyHP) {
+        return;
+      }
+      $('#log').append(`
+        <div class="disposition">
+          <span class="nums enemy">
+            ${enemyMod == 1 ? '⇑':''}
+            ${enemyMod == 2 ? '⇑⇑':''}
+            ${enemyMod == -1 ? '⇓' : ''}
+            &nbsp;${enemyHP}/${enemyMaxHP}
+          </span>
+          <div class="bar enemy ${oe >= enemyHP ? 'damage' : 'recovery'}">
+            <div class="label">Enemy</div>
+            <div class="old hp" style="width: ${oe / enemyMaxHP * 100}%"></div>
+            <div class="new hp" style="width: ${enemyHP / enemyMaxHP * 100}%"></div>
+          </div>&nbsp;
+          <div class="bar ${op >= partyHP ? 'damage' : 'recovery'}">
+            <div class="label">Party</div>
+            <div class="old hp" style="width: ${op / partyMaxHP * 100}%"></div>
+            <div class="new hp" style="width: ${partyHP / partyMaxHP * 100}%"></div>
+          </div>
+          <span class="nums">${partyHP}/${partyMaxHP}&nbsp;
+            ${partyMod == 1 ? '⇑':''}
+            ${partyMod == 2 ? '⇑⇑':''}
+            ${partyMod == -1 ? '⇓' : ''}
+          </span>
+        </div>
+      `);
+    }
+
+    function enemyHPChange(v) {
+      const orig = enemyHP;
+      if (v < 0) {
+        enemyHP -= v;
+        enemyHP = enemyHP <= enemyMaxHP ? enemyHP : enemyMaxHP;
+        // logMessage("The enemy recovered " + -v + " damage. HP increased to " + enemyHP + ".");
+      }
+      else if (v == 0) {
+        // logMessage("The enemy's HP remained the same.");
+      }
+      if (v > 0) {
+        enemyHP -= v;
+        enemyHP = enemyHP >= 0 ? enemyHP : 0;
+        // logMessage("The enemy took " + v + " damage. HP reduced to " + enemyHP + ".");
+      }
+      if (enemyHP <= 0) {
+        enemyHP = 0;
+        logMessage("The enemy was defeated!", "victory");
+        logMessage(`Party HP: ${partyHP}/${partyMaxHP}`);
+      }
+      logHpBars(partyHP, orig);
+    }
+
+    function partyHPChange(v) {
+      const orig = partyHP;
+      if (v < 0) {
+        partyHP -= v;
+        partyHP = partyHP <= partyMaxHP ? partyHP : partyMaxHP;
+        // logMessage("The party recovered " + -v + " damage. HP increased to " + partyHP + ".");
+      }
+      else if (v == 0) {
+        // logMessage("The party's HP remained the same.");
+      }
+      if (v > 0) {
+        partyHP -= v;
+        partyHP = partyHP >= 0 ? partyHP : 0;
+        // logMessage("The party took " + v + " damage. HP reduced to " + partyHP + ".");
+      }
+      if (partyHP <= 0) {
+        logMessage("The party was defeated...", "defeat");
+        logMessage(`Enemy HP: ${enemyHP}/${enemyMaxHP}`);
+      }
+      logHpBars(orig, enemyHP);
+    }
+
+    function getPartyMember() {
+      if (partyRoundOrder.length == 0) {
+        partyRoundOrder = shuffle([...variables.party]);
+      }
+      return partyRoundOrder.pop();
+    }
+
+    function getEnemy() {
+      if (enemyRoundOrder.length == 0) {
+        enemyRoundOrder = shuffle([...variables.enemies]);
+        // console.log(enemyRoundOrder);
+      }
+      return enemyRoundOrder.pop();
+    }
+
+    function turnText(pc, a, b, ps = 0, es = 0) {
+      const e = getEnemy();
+      let stat = pc[a];
+      if (a === 'tech') {
+        a = pc.techName;
+      }
+      if (b === 'tech') {
+        b = e.techName;
+      }
+      logMessage(`${pc.name}'s ${a.toProperCase()} (${stat}+${partyMod} | ${ps}) vs ${e.name}'s ${b.toProperCase()} (${enemyAtk}+${enemyMod} | ${es})`, 'turn');
+    }
+
+    String.prototype.toProperCase = function () {
+      return this.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    };
+
+    function compareAttack(pc, e) {
+      let ps = 0;
+      let es = 0;
+      let vs = [];
+      switch(e) {
+        case "attack":
+          ps = partyTest(pc.attack, 0);
+          es = enemyTest(0);
+          turnText(pc, 'attack', e, ps, es);
+          enemyHPChange(ps);
+          partyHPChange(es);
+          break;
+        case "defend":
+          vs = vsTest(pc.attack);
+          ps = vs[0];
+          es = vs[1];
+          turnText(pc, 'attack', e, ps, es);
+          enemyHPChange(vs[2]);
+          break;
+        case "tech":
+          ps = partyTest(pc.attack, 0);
+          es = enemyTest(0);
+          turnText(pc, 'attack', e, ps, es);
+          logMessage("Party attack cancelled enemy tech!");
+          enemyHPChange(ps);
+          break;
+        case "move":
+          vs = vsTest(pc.attack);
+          ps = vs[0];
+          es = vs[1];
+          turnText(pc, 'attack', e, ps, es);
+          if (vs[2] >= 0) {
+            enemyHPChange(vs[2]);
+          }
+          if (vs[2] == -1) {
+            logMessage("Party disadvantaged!");
+            partyMod = -1;
+          }
+          if (vs[2] < -1) {
+            logMessage("Enemy gains advantage!");
+            enemyMod = 2;
+          }
+          break;
+      }
+    }
+
+    function compareDefend(pc, e) {
+      let ps = 0;
+      let es = 0;
+      let vs = [];
+      switch(e) {
+        case "attack":
+          vs = vsTest(pc.defend);
+          ps = vs[0];
+          es = vs[1];
+          turnText(pc, 'defend', e, ps, es);
+          partyHPChange(vs[2]);
+          break;
+        case "defend":
+          ps = partyTest(pc.defend, 3);
+          es = enemyTest(3);
+          turnText(pc, 'defend', e, ps, es);
+          partyHPChange(-ps);
+          enemyHPChange(-es);
+          break;
+        case "tech":
+          ps = partyTest(pc.defend, 0);
+          es = enemyTest(0);
+          turnText(pc, 'defend', e, ps, es);
+          logMessage("Enemy tech cancelled player defense!");
+          partyHPChange(es);
+          break;
+        case "move":
+          vs = vsTest(pc.defend);
+          ps = vs[0];
+          es = vs[1];
+          turnText(pc, 'defend', e, ps, es);
+          if (vs[2] >= 0) {
+            logMessage("Enemy failed to gain an advantage.")
+            partyHPChange(-vs[2]);
+          }
+          if (vs[2] == -1) {
+            logMessage("Party disadvantaged!");
+            partyMod = -1;
+          }
+          if (vs[2] < -1) {
+            logMessage("Enemy gains advantage!");
+            enemyMod = 2;
+          }
+          break;
+      }
+    }
+
+    function compareTech(pc, e) {
+      let ps = 0;
+      let es = 0;
+      let vs = 0;
+      let v = 0;
+      switch(e) {
+        case "attack":
+          ps = 0;
+          es = enemyTest(0);
+          turnText(pc, 'tech', e, ps , es);
+          logMessage("Player tech interrupted!");
+          partyHPChange(es);
+          break;
+        case "defend":
+          ps = partyTest(pc.tech, 0);
+          es = 0;
+          turnText(pc, 'tech', e, ps , es);
+          logMessage("Party tech cancelled enemy defense!");
+          enemyHPChange(ps);
+          break;
+        case "tech":
+          vs = vsTest(pc.tech);
+          ps = vs[0];
+          es = vs[1];
+          turnText(pc, 'tech', e, ps , es);
+          if (vs[2] > 0) {
+            enemyHPChange(vs[2]);
+          }
+          else if (vs[2] < 0) {
+            partyHPChange(-vs[2]);
+          }
+          else {
+            logMessage("The techs cancelled each other out!");
+          }
+          break;
+        case "move":
+          ps = partyTest(pc.tech, 0);
+          es = enemyTest(0);
+          turnText(pc, 'tech', e, ps , es);
+          enemyHPChange(ps);
+          if (es <= 0) {
+            logMessage("Enemy failed to gain an advantage.")
+          }
+          if (es == 1) {
+            logMessage("Party disadvantaged!");
+            partyMod = -1;
+          }
+          if (es > 1) {
+            logMessage("Enemy gains advantage!");
+            enemyMod = 2;
+          }
+          break;
+      }
+    }
+
+    function compareMove(pc, e) {
+      let ps = 0;
+      let es = 0;
+      let vs = [];
+      switch(e) {
+        case "attack":
+          vs = vsTest(pc.move);
+          ps = vs[0];
+          es = vs[1];
+          turnText(pc, 'move', e, ps, es);
+          if (vs[2] <= 0) {
+            logMessage("Party failed to gain an advantage.");
+            partyHPChange(-vs[2]);
+          }
+          else if (vs[2] == 1) {
+            logMessage("Enemy disadvantaged!");
+            enemyMod = -1;
+          }
+          else if (vs[2] > 1) {
+            logMessage("Party gains advantage!");
+            partyMod += 2;
+          }
+          break;
+        case "defend":
+          vs = vsTest(pc.move);
+          ps = vs[0];
+          es = vs[1];
+          turnText(pc, 'move', e, ps, es);
+          if (vs[2] <= 0) {
+            logMessage("Party failed to gain an advantage.");
+            enemyHPChange(vs[2]);
+          }
+          else if (vs[2] == 1) {
+            logMessage("Enemy disadvantaged!");
+            enemyMod = -1;
+          }
+          else if (vs[2] > 1) {
+            logMessage("Party gains advantage!");
+            partyMod = 2;
+          }
+          break;
+        case "tech":
+          ps = partyTest(pc.move, 0);
+          es = enemyTest(0);
+          turnText(pc, 'move', e, ps, es);
+          partyHPChange(es);
+          if (ps <= 0) {
+            logMessage("Party failed to gain an advantage.");
+          }
+          else if (ps == 1) {
+            logMessage("Enemy disadvantaged!");
+            enemyMod = -1;
+          }
+          else if (ps > 1) {
+            logMessage("Party gains advantage!");
+            partyMod = 2;
+          }
+          break;
+        case "move":
+          ps = partyTest(pc.move, 0);
+          es = enemyTest(0);
+          turnText(pc, 'move', e, ps, es);
+          if (ps <= 0) {
+            logMessage("Party failed to gain an advantage.");
+          }
+          else if (ps == 1) {
+            logMessage("Enemy disadvantaged!");
+            enemyMod = -1;
+          }
+          else if (ps > 1) {
+            logMessage("Party gains advantage!");
+            partyMod += 2;
+          }
+          if (es <= 0) {
+            logMessage("Enemy failed to gain an advantage.");
+          }
+          else if (es == 1) {
+            logMessage("Party disadvantaged!");
+            partyMod -= 1;
+          }
+          else if (es > 1) {
+            logMessage("Enemy gains advantage!");
+            enemyMod += 2;
+          }
+          break;
+      }
+    }
+
+    function getPc(name) {
+      let pc = null;
+      variables.party.forEach(p => {
+        if (p.name.toLowerCase() === name.toLowerCase()) {
+          pc = p;
+        }
+      });
+      return pc;
+    }
+
+    function compare(p, e) {
+      if (!combatContinue()) {
+        return;
+      }
+      const action = p.split(':');
+      const pc = getPc(action[0]);
+      pc.xp += 10 * variables.xpMultiplier;
+      const pa = action[1];
+      switch(pa) {
+        case "attack":
+          compareAttack(pc, e);
+          break;
+        case "defend":
+          compareDefend(pc, e);
+          break;
+        case "tech":
+          compareTech(pc, e);
+          break;
+        case "move":
+          compareMove(pc, e);
+          break;
+      }
+    }
+
+    function combatContinue() {
+      return partyHP > 0 && enemyHP > 0;
+    }
+
+    enemyDeck = ["attack", "defend", "tech", "move"];
+
+    // genImage();
+
+    logMessage('Enemy Level: ' + enemyAtk * 4);
+
+    while (partyHP > 0 && enemyHP > 0) {
+      playerTurns = shuffle(playerTurns);
+      // console.log(playerTurns);
+      
+      for(let i = 0; i < playerTurns.length; i++) {
+        if (partyHP > 0 && enemyHP > 0) {
+          logMessage(playerTurns[i].p + "'s round", "round");
+          enemyTurn = shuffle(enemyDeck);
+          for (let j = 0; j < 3; j++) {
+            compare(playerTurns[i].a[j], enemyTurn[j]);
+          }
+        }
+      }
+    }
+
+    logMessage("\n\nResult", "round");
+    variables.party.forEach(p => {
+      if (p.xp > 0) {
+        logMessage(`${p.name} gained ${Math.floor(p.xp)} XP!`);
+      }
+    });
+  </script>
+</body>
+</html>
